@@ -1,2 +1,4 @@
 pandas==2.2.1
 numpy==1.26.4
+tkinter==8.6
+pandastable==0.13.1
