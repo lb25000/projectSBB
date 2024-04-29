@@ -16,11 +16,14 @@ This reporting tool is designed for all stakeholders who need to analyze and und
 ## How to Get Started
 To get started with the SBB Railway Network Reporting Tool, follow these steps:
 
-### Prerequisites
+## Prerequisites
 - Python
 - Pandas
 - Matplotlib
 - Seaborn
 
-### Where to find Key Resources
+## Where to find Key Resources
 Data provided by SBB: <a href="https://data.sbb.ch/explore/dataset/perronkante/export/" target="_blank">https://data.sbb.ch/explore/dataset/perronkante/export/ </a>
+
+## Licence
+This project is licensed under the [MIT licence](LICENSE). Details can be found in the [LICENSE](LICENSE) file.
