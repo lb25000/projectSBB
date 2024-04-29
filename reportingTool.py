@@ -2,7 +2,15 @@
 
 import pandas as pd
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
+from mpl_toolkits.basemap import Basemap
+
+
+
+import requests
+from owslib.wmts import WebMapTileService
+
+
 import geopandas as gpd
 from shapely.geometry import Point, Polygon
 import seaborn as sns
@@ -18,11 +26,23 @@ data_types = all_data_df.dtypes
 print(data_types)
 '''
 # change object to string
-columns_to_string = ['Abkuerzung Bahnhof', 'Haltestellen Name', 'Perrontyp', 'Hilfstritt', 'Höhenverlauf', 'Material', 'Kantenart', 'Auftritt', '1_koord', '2_koord']
+columns_to_string = ['Abkuerzung Bahnhof', 'Haltestellen Name', 'Perrontyp', 'Hilfstritt', 'Höhenverlauf', 'Material', 'Kantenart', 'Auftritt']
 all_data_df[columns_to_string] = all_data_df[columns_to_string].astype('string')
 
 # boolean spalte für Hilfstritt
 all_data_df['Hilfstritt boolean'] = np.where(all_data_df['Hilfstritt'] == 'vorhanden', True, False)
+# Trennen der Koordinaten in Start- und Endkoordinaten
+all_data_df[['start_lat', 'start_lon']] = all_data_df['1_koord'].str.split(',', expand=True)
+all_data_df[['end_lat', 'end_lon']] = all_data_df['2_koord'].str.split(',', expand=True)
+
+# Benennen der neuen Spalten
+all_data_df = all_data_df.rename(columns={'start_lat': 'start_lat', 'start_lon': 'start_lon',
+                                          'end_lat': 'end_lat', 'end_lon': 'end_lon'})
+
+# Konvertieren der Spalten in numerische Werte
+all_data_df[['start_lat', 'start_lon', 'end_lat', 'end_lon']] = all_data_df[['start_lat', 'start_lon', 'end_lat', 'end_lon']].astype(float)
+
+
 
 print(all_data_df.shape)
 #unique values
@@ -67,51 +87,61 @@ def filter_by_Perronkantenlänge(df,x,y):
 pd.set_option('display.max_columns', None)
 print(filter_by_Perronkantenlänge(all_data_df, 100, 120))
 
-import geopandas as gpd
-import matplotlib.pyplot as plt
-from shapely.geometry import Point, Polygon
 
-def filter_and_plot_geographic_area(df, min_lon, max_lon, min_lat, max_lat):
+
+
+
+def filter_and_plot_geographic_area(df, min_x, max_x, min_y, max_y):
     """
     Filtert den DataFrame nach Einträgen, die sich in einem bestimmten geografischen Bereich befinden,
     und stellt die Ergebnisse graphisch dar.
 
     :param df: DataFrame, der gefiltert werden soll.
-    :param min_lon: Minimale Längenkoordinate des geografischen Bereichs.
-    :param max_lon: Maximale Längenkoordinate des geografischen Bereichs.
-    :param min_lat: Minimale Breitencoordinate des geografischen Bereichs.
-    :param max_lat: Maximale Breitencoordinate des geografischen Bereichs.
+    :param min_x: Minimale x-Koordinate des geografischen Bereichs (LV95).
+    :param max_x: Maximale x-Koordinate des geografischen Bereichs (LV95).
+    :param min_y: Minimale y-Koordinate des geografischen Bereichs (LV95).
+    :param max_y: Maximale y-Koordinate des geografischen Bereichs (LV95).
     """
-    # Erstelle ein Polygon, das den geografischen Bereich definiert
-    bounding_box = Polygon([(min_lon, min_lat), (min_lon, max_lat), (max_lon, max_lat), (max_lon, min_lat)])
 
-    # Konvertiere Koordinaten in Punkte
-    df['point_1'] = df['1_koord'].apply(lambda x: Point(map(float, x.split(', '))))
-    df['point_2'] = df['2_koord'].apply(lambda x: Point(map(float, x.split(', '))))
+    switzerland_coords = {
+        'lat_0': 46.8182,
+        'lon_0': 8.2275,
+        'llcrnrlon': 5.9561,
+        'llcrnrlat': 45.818,
+        'urcrnrlon': 10.4921,
+        'urcrnrlat': 47.8085,
+    }
+    # Erstellen einer Basiskarte
+    m = Basemap(**switzerland_coords, projection='merc', resolution='h')
 
-    # Filtere Einträge, die sich in dem geografischen Bereich befinden
-    filtered_df = df[(df['point_1'].apply(lambda x: bounding_box.contains(x))) |
-                     (df['point_2'].apply(lambda x: bounding_box.contains(x)))]
+    # Zeichnen von  Grenzen
+    m.drawcoastlines()
+    m.drawcountries()
+    m.drawmapboundary()
 
-    # Erstelle eine GeoDataFrame für die Punkte innerhalb des geografischen Bereichs
-    points_within_area = gpd.GeoDataFrame(filtered_df, geometry='point_1')
+    # Filtern des DataFrames nach Koordinaten im geografischen Bereich
+    filtered_df = df[(df['start_lat'] >= min_y) & (df['start_lat'] <= max_y) &
+                     (df['start_lon'] >= min_x) & (df['start_lon'] <= max_x) |
+                     (df['end_lat'] >= min_y) & (df['end_lat'] <= max_y) &
+                     (df['end_lon'] >= min_x) & (df['end_lon'] <= max_x)]
 
-    # Erstelle die Abbildung und die Achsen
-    fig, ax = plt.subplots(figsize=(10, 10))
+    # Konvertieren der Koordinaten in das Koordinatensystem der Basiskarte
+    x_start, y_start = m(filtered_df['start_lon'].values, filtered_df['start_lat'].values)
+    x_end, y_end = m(filtered_df['end_lon'].values, filtered_df['end_lat'].values)
 
-    # Plotte den geografischen Bereich
-    gpd.GeoSeries(bounding_box).plot(ax=ax, color='lightblue', alpha=0.5, label='Geographic Area')
+    # Plotten der gefilterten Koordinaten auf der Karte
+    m.scatter(x_start, y_start, marker='o', color='r', label='Startpunkt', zorder=5, s=10)
+    m.scatter(x_end, y_end, marker='o', color='b', label='Endpunkt', zorder=5, s=10)
 
-    # Plotte die Punkte innerhalb des geografischen Bereichs
-    points_within_area.plot(ax=ax, color='red', markersize=50, label='Points within Area')
 
-    # Beschriftungen hinzufügen
-    plt.xlabel('Longitude')
-    plt.ylabel('Latitude')
-    plt.title('Points within Geographic Area')
+    plt.title('geographical representation of the edges of the platform')
 
-    # Anzeigen der Abbildung
+    # Anzeigen der Karte
     plt.show()
 
+
+
+
+
 # Beispielaufruf der Funktion mit einem geografischen Bereich
-filter_and_plot_geographic_area(all_data_df, 47, 8.2, 47, 8.7)
+filter_and_plot_geographic_area(all_data_df, 6.5, 9.5, 45.5, 48.0)
