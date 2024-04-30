@@ -5,20 +5,24 @@ from tkinter import messagebox
 from pandastable import Table
 
 def readData():
+    #silent warnings
+    pd.set_option('future.no_silent_downcasting', True)
     # Read data from CSV File
     df_perronkante = pd.read_csv('./Daten/perronkante.csv', sep=';')
 
-    # Create DataFrame for coordinates
-    koord = pd.DataFrame(data=df_perronkante['2_koord'].str.split(',', expand=True))
-    koord.columns=['lon', 'lat']
+    # Splitting the '1_koord' and '2_koord' columns into separate columns
+    start_coords = df_perronkante['1_koord'].str.split(',', expand=True)
+    end_coords = df_perronkante['2_koord'].str.split(',', expand=True)
 
-    # Adding longtitude and latitude in df_perronkante
-    df_perronkante.insert(22, koord['lon'].name, koord['lon'])
-    df_perronkante.insert(23, koord['lat'].name, koord['lat'])
-    df_perronkante = df_perronkante.astype({'lon':float, 'lat':float})
+    # Renaming columns
+    start_coords.columns = ['start_lon', 'start_lat']
+    end_coords.columns = ['end_lon', 'end_lat']
 
-    # Remove redundant column "2_koord"
-    df_perronkante = df_perronkante.drop("2_koord", axis='columns')
+    # Concatenating start and end coordinates with original DataFrame
+    df_perronkante = pd.concat([df_perronkante, start_coords, end_coords], axis=1)
+
+
+    df_perronkante = df_perronkante.drop(['1_koord', '2_koord'], axis='columns')
 
     return df_perronkante
 
@@ -30,6 +34,10 @@ def showTable():
     # Create a Pandas Table object
     table = Table(window, dataframe=df)
     table.show()
+    # Add horizontal scrollbar
+    hsb = ttk.Scrollbar(window, orient="horizontal", command=table.horizontal_scroll)
+    hsb.pack(side="bottom", fill="x")
+    table.set_xscrollcommand(hsb.set)
 
 def plot_data():
     # Add code to plot data here
