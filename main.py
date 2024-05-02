@@ -35,7 +35,7 @@ def search_columns(table):
 
     # Create a frame for search fields
     search_frame = ttk.Frame(table)
-    search_frame.pack(side="top", fill="x")  # Pack on top
+    search_frame.pack(side="top", fill="x",padx=5,pady=(5,5))  # Pack on top
 
     # Create and position search entries for each column
     search_entries = []  # List to store search entries
@@ -43,7 +43,8 @@ def search_columns(table):
         column_width = len(column_name)
 
         search_entry = ttk.Entry(search_frame, width=column_width)
-        search_entry.grid(column=i, row=1, padx=5, pady=5)  # Grid positioning
+        search_entry.grid(column=i, row=1, padx=(5,10), pady=5)  # Grid positioning
+        search_entries.append(search_entry)
         search_entries.append(search_entry)
 
         # Bind a function to the search entry for filtering and highlighting
@@ -72,19 +73,35 @@ def showTable():
     window = tk.Toplevel(root)
     window.title("DataFrame Viewer")
 
-    # Create a Pandas Table object
+    # Create a ttk.Notebook widget
+    notebook = ttk.Notebook(window)
+    notebook.pack(side="top", fill="both", expand=True)
+
+    # Create a frame for search fields
+    search_frame = ttk.Frame(notebook)
+    search_frame.pack(side="top", fill="x", padx=5, pady=(10, 20))  # Add padding
+
+    # Create search entries within the search frame
+    search_columns(search_frame)  # Add search fields to the search frame
+
+    # Create a frame for the table
+    table_frame = ttk.Frame(notebook)
+    table_frame.pack(side="top", fill="both", expand=True)
+
+    # Create a Pandas Table object in the table frame
     global table
-    table = Table(window, dataframe=df)
-
-    search_columns(table)
-
+    table = Table(table_frame, dataframe=df)
     table.show()
 
-
-    # Add horizontal scrollbar
-    hsb = ttk.Scrollbar(window, orient="horizontal", command=table.horizontal_scroll)
+    # Add horizontal scrollbar to the table frame
+    hsb = ttk.Scrollbar(table_frame, orient="horizontal", command=table.horizontal_scroll)
     hsb.pack(side="bottom", fill="x")
     table.set_xscrollcommand(hsb.set)
+
+    # Add tabs to the notebook
+    notebook.add
+
+
 
 def plot_data():
     # Add code to plot data here
