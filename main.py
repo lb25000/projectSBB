@@ -12,6 +12,7 @@ class TableGUI:
 
         # DataFrame einlesen
         self.df = readData()
+        self.undo_df = self.df
 
         #copy original df, to habe a backup
         self.original_df = self.df.copy()
@@ -98,6 +99,8 @@ class TableGUI:
         add_button.pack(side="left", padx=5)
         go_button = ttk.Button(button_frame, text="Go", command=self.execute_search)
         go_button.pack(side="left", padx=5)
+        undo_filter_button = ttk.Button(button_frame, text="Undo filters", command=self.undo_filter)
+        undo_filter_button.pack(side="left", padx=5)
 
         # Packen der Suchfelder und Eingabefelder
         self.pack_search_and_input()
@@ -175,6 +178,7 @@ class TableGUI:
                 if len(word)!=0:
                     search_df = self.filter_Float(self.df, word, column)        
 
+        self.undo_df = self.df
         self.df = search_df
         self.update_table()
 
@@ -182,6 +186,10 @@ class TableGUI:
         self.search_frame.pack_forget()
         self.create_input_fields()
         self.input_frame.pack(side="top", fill="x", padx=10, pady=10)
+
+    def undo_filter(self):
+        self.df = self.undo_df
+        self.update_table()
 
     @staticmethod
     def filter_String(df, word=None, columnName=None):
