@@ -21,6 +21,7 @@ class TableGUI:
         self.undo_df = self.original_df.copy()
 
         #definition of numeric and string columns
+
         self.integer_columns = ["Linie", "Didok-Nummer", "IPID", "FID", "BPUIC"]
         self.float_columns = ["KM", "Perronkantenlänge", "GO_IPID"]
         self.string_columns = ["Abkuerzung Bahnhof", "Haltestellen Name", "Perrontyp", "Perron Nummer",
@@ -28,6 +29,7 @@ class TableGUI:
                                 "Höhenverlauf", "Material", "Bemerkung Material", "Kantenart", 
                                 "Bemerkung Kantenkrone", "Auftritt", "lod", "start_lon", "start_lat",
                                 "end_lon", "end_lat"]
+
 
         # Frame für die Tabelle
         self.table_frame = ttk.Frame(master)
@@ -101,10 +103,12 @@ class TableGUI:
         search_button.pack(side="left", padx=5)
         add_button = ttk.Button(button_frame, text="Add", command=self.show_input_fields)
         add_button.pack(side="left", padx=5)
+
         self.go_button = ttk.Button(button_frame, text="Go", command=self.execute_search)
         self.go_button.pack(side="left", padx=5)
         undo_filter_button = ttk.Button(button_frame, text="Undo filters", command=self.undo_filter)
         undo_filter_button.pack(side="left", padx=5)
+
 
         # Packen der Suchfelder und Eingabefelder
         self.pack_search_and_input()
@@ -220,8 +224,10 @@ class TableGUI:
         self.create_input_fields()
         self.input_frame.pack(side="top", fill="x", padx=10, pady=10)
 
+
     def undo_filter(self):
         self.df = self.undo_df
+
         self.update_table()
 
     @staticmethod
