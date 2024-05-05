@@ -16,8 +16,13 @@ class TableGUI:
         #copy original df, to habe a backup
         self.original_df = self.df.copy()
         #definition of numeric and string columns
-        self.numeric_columns = ["Linie", "KM"]
-        self.string_columns = ["Abkuerzung Bahnhof", "Haltestellen Name"]
+        self.integer_columns = ["Linie", "Didok-Nummer", "IPID", "FID", "BPUIC"]
+        self.float_columns = ["KM", "Perronkantenlänge", "GO_IPID"]
+        self.string_columns = ["Abkuerzung Bahnhof", "Haltestellen Name", "Perrontyp", "Perron Nummer",
+                                "Kundengleisnummer", "Perronkantenhöhe", "Bemerkung Höhe", "Hilfstritt"
+                                "Höhenverlauf", "Material", "Bemerkung Material", "Kantenart", 
+                                "Bemerkung Kantenkrone", "Auftritt", "lod", "start_lon", "start_lat",
+                                "end_lon", "end_lat"]
 
         # Frame für die Tabelle
         self.table_frame = ttk.Frame(master)
@@ -161,7 +166,15 @@ class TableGUI:
         for column, entry in self.search_entries.items():
             word = entry.get()
             if column in self.string_columns:
-                search_df = self.filter_String(self.df, word, column)
+                if len(word)!=0: 
+                    search_df = self.filter_String(self.df, word, column)
+            elif column in self.integer_columns:
+                if len(word)!=0: 
+                    search_df = self.filter_Integer(self.df, word, column)
+            elif column in self.float_columns:
+                if len(word)!=0:
+                    search_df = self.filter_Float(self.df, word, column)        
+
         self.df = search_df
         self.update_table()
 
@@ -183,8 +196,34 @@ class TableGUI:
             line_df = df[df[columnName] == word]
 
         return line_df
+    
+    @staticmethod
+    def filter_Integer(df, word=None, columnName=None):
+        """
+        :param word: wort nachdem gesucht und verglichen wird
+        :param columnName: Der Column-Name in der gefiltert werden soll
+        :return: gefiltertes datafram
 
+        """
+        line_df = df
+        if (word != None):
+            line_df = df[df[columnName] == int(word)]
 
+        return line_df
+    
+    @staticmethod
+    def filter_Float(df, word=None, columnName=None):
+        """
+        :param word: wort nachdem gesucht und verglichen wird
+        :param columnName: Der Column-Name in der gefiltert werden soll
+        :return: gefiltertes datafram
+
+        """
+        line_df = df
+        if (word != None):
+            line_df = df[df[columnName] == float(word)]
+
+        return line_df
 
 
 
