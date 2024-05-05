@@ -41,16 +41,18 @@ class TableGUI:
             self.table.column(col, width=100, minwidth=50, anchor="center")  # Spaltenbreite anpassen
         self.table.pack(side="left", fill="both", expand=True)
 
+        # Zeilen in der Tabelle einfügen
+        self.insert_table_rows()
 
         # Scrollbars für die Tabelle hinzufügen
         yscrollbar = ttk.Scrollbar(self.table_frame, orient="vertical", command=self.table.yview)
-        yscrollbar.pack(side="right", fill="y")
-        xscrollbar = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.table.xview)
-        xscrollbar.pack(side="bottom", fill="x")
-        self.table.configure(yscrollcommand=yscrollbar.set, xscrollcommand=xscrollbar.set)
+        yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
 
-        # Zeilen in der Tabelle einfügen
-        self.insert_table_rows()
+        xscrollbar = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.table.xview)
+        xscrollbar = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.table.xview)
+        xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
+
+        self.table.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
 
         # Suchfelder Frame mit Canvas für Scrollbar
         self.search_frame = ttk.Frame(master)
@@ -94,8 +96,6 @@ class TableGUI:
 
         # Packen der Suchfelder und Eingabefelder
         self.pack_search_and_input()
-
-
 
     def apply_string_search_filter(self, event, column):
         print("Apply string search filter called")
