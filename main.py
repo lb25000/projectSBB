@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import pandas as pd
+import numpy as np
 
 
 
@@ -13,11 +14,22 @@ class TableGUI:
         # DataFrame einlesen
         self.df = readData()
 
-        #copy original df, to habe a backup
+        #copy original df, to have a backup
         self.original_df = self.df.copy()
+
+        #copy original df to undo filters
+        self.undo_df = self.original_df.copy()
+
         #definition of numeric and string columns
-        self.numeric_columns = ["Linie", "KM", "Kundengleisnummer", "Perronkantenlänge"]
-        self.string_columns = ["Abkuerzung Bahnhof", "Haltestellen Name"]
+
+        self.integer_columns = ["Linie", "Didok-Nummer", "IPID", "FID", "BPUIC"]
+        self.float_columns = ["KM", "Perronkantenlänge", "GO_IPID"]
+        self.string_columns = ["Abkuerzung Bahnhof", "Haltestellen Name", "Perrontyp", "Perron Nummer",
+                                "Kundengleisnummer", "Perronkantenhöhe", "Bemerkung Höhe", "Hilfstritt"
+                                "Höhenverlauf", "Material", "Bemerkung Material", "Kantenart", 
+                                "Bemerkung Kantenkrone", "Auftritt", "lod", "start_lon", "start_lat",
+                                "end_lon", "end_lat"]
+
 
         # Frame für die Tabelle
         self.table_frame = ttk.Frame(master)
@@ -41,16 +53,18 @@ class TableGUI:
             self.table.column(col, width=100, minwidth=50, anchor="center")  # Spaltenbreite anpassen
         self.table.pack(side="left", fill="both", expand=True)
 
+        # Zeilen in der Tabelle einfügen
+        self.insert_table_rows()
 
         # Scrollbars für die Tabelle hinzufügen
         yscrollbar = ttk.Scrollbar(self.table_frame, orient="vertical", command=self.table.yview)
-        yscrollbar.pack(side="right", fill="y")
-        xscrollbar = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.table.xview)
-        xscrollbar.pack(side="bottom", fill="x")
-        self.table.configure(yscrollcommand=yscrollbar.set, xscrollcommand=xscrollbar.set)
+        yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
 
-        # Zeilen in der Tabelle einfügen
-        self.insert_table_rows()
+        xscrollbar = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.table.xview)
+        xscrollbar = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.table.xview)
+        xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
+
+        self.table.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
 
         # Suchfelder Frame mit Canvas für Scrollbar
         self.search_frame = ttk.Frame(master)
@@ -89,15 +103,15 @@ class TableGUI:
         search_button.pack(side="left", padx=5)
         add_button = ttk.Button(button_frame, text="Add", command=self.show_input_fields)
         add_button.pack(side="left", padx=5)
-        go_button = ttk.Button(button_frame, text="Go", command=self.execute_search)
-        go_button.pack(side="left", padx=5)
-        return_button = ttk.Button(button_frame, text="Return", command=self.return_to_origin)
-        return_button.pack(side="left", padx=5)
+
+        self.go_button = ttk.Button(button_frame, text="Go", command=self.execute_search)
+        self.go_button.pack(side="left", padx=5)
+        undo_filter_button = ttk.Button(button_frame, text="Undo filters", command=self.undo_filter)
+        undo_filter_button.pack(side="left", padx=5)
+
 
         # Packen der Suchfelder und Eingabefelder
         self.pack_search_and_input()
-
-
 
     def apply_string_search_filter(self, event, column):
         print("Apply string search filter called")
@@ -153,6 +167,7 @@ class TableGUI:
         self.input_frame.pack_forget()
 
     def show_search_fields(self):
+        self.go_button.configure(command=self.execute_search)
         self.input_frame.pack_forget()
         self.create_search_fields()
         self.search_frame.pack(side="top", fill="x", padx=10, pady=10)
@@ -163,17 +178,56 @@ class TableGUI:
         for column, entry in self.search_entries.items():
             word = entry.get()
             if column in self.string_columns:
-                search_df = self.filter_String(self.df, word, column)
+                if len(word)!=0: 
+                    search_df = self.filter_String(self.df, word, column)
+            elif column in self.integer_columns:
+                if len(word)!=0: 
+                    search_df = self.filter_Integer(self.df, word, column)
+            elif column in self.float_columns:
+                if len(word)!=0:
+                    search_df = self.filter_Float(self.df, word, column)        
+
         self.df = search_df
         self.update_table()
 
+    def execute_input(self):
+        # Eingabefunktion ausführen
+        df = self.df.copy()
+        input_df = pd.DataFrame(columns=df.columns)
+        for column, entry in self.input_entries.items():
+            word = entry.get()
+            if column in self.string_columns:
+                if len(word)!=0:
+                    input_df.loc[0, column]=word
+                else:
+                    input_df.loc[0, column] = np.NaN
+            elif column in self.integer_columns:
+                if len(word)!=0: 
+                    input_df.loc[0, column]=int(word)
+                else:
+                    input_df.loc[0, column] = np.NaN
+            elif column in self.float_columns:
+                if len(word)!=0:
+                    input_df.loc[0, column]=float(word)
+                else:
+                    input_df.loc[0, column] = np.NaN
+
+        print(input_df)
+
+        self.df = pd.concat([df, input_df])
+        self.undo_df = self.df
+        self.update_table()       
+
     def show_input_fields(self):
+        self.go_button.configure(command=self.execute_input)
         self.search_frame.pack_forget()
         self.create_input_fields()
         self.input_frame.pack(side="top", fill="x", padx=10, pady=10)
 
-    def return_to_origin(self):
-        self.df = self.original_df
+
+    def undo_filter(self):
+        self.df = self.undo_df
+
         self.update_table()
 
     @staticmethod
@@ -189,8 +243,34 @@ class TableGUI:
             line_df = df[df[columnName] == word]
 
         return line_df
+    
+    @staticmethod
+    def filter_Integer(df, word=None, columnName=None):
+        """
+        :param word: wort nachdem gesucht und verglichen wird
+        :param columnName: Der Column-Name in der gefiltert werden soll
+        :return: gefiltertes datafram
 
+        """
+        line_df = df
+        if (word != None):
+            line_df = df[df[columnName] == int(word)]
 
+        return line_df
+    
+    @staticmethod
+    def filter_Float(df, word=None, columnName=None):
+        """
+        :param word: wort nachdem gesucht und verglichen wird
+        :param columnName: Der Column-Name in der gefiltert werden soll
+        :return: gefiltertes datafram
+
+        """
+        line_df = df
+        if (word != None):
+            line_df = df[df[columnName] == float(word)]
+
+        return line_df
 
 
 
