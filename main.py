@@ -16,7 +16,7 @@ class TableGUI:
         #copy original df, to habe a backup
         self.original_df = self.df.copy()
         #definition of numeric and string columns
-        self.numeric_columns = ["Linie", "KM"]
+        self.numeric_columns = ["Linie", "KM", "Kundengleisnummer", "Perronkantenlänge"]
         self.string_columns = ["Abkuerzung Bahnhof", "Haltestellen Name"]
 
         # Frame für die Tabelle
@@ -91,6 +91,8 @@ class TableGUI:
         add_button.pack(side="left", padx=5)
         go_button = ttk.Button(button_frame, text="Go", command=self.execute_search)
         go_button.pack(side="left", padx=5)
+        return_button = ttk.Button(button_frame, text="Return", command=self.return_to_origin)
+        return_button.pack(side="left", padx=5)
 
         # Packen der Suchfelder und Eingabefelder
         self.pack_search_and_input()
@@ -169,6 +171,10 @@ class TableGUI:
         self.search_frame.pack_forget()
         self.create_input_fields()
         self.input_frame.pack(side="top", fill="x", padx=10, pady=10)
+
+    def return_to_origin(self):
+        self.df = self.original_df
+        self.update_table()
 
     @staticmethod
     def filter_String(df, word=None, columnName=None):
