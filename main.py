@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import pandas as pd
+import numpy as np
 
 
 
@@ -100,8 +101,8 @@ class TableGUI:
         search_button.pack(side="left", padx=5)
         add_button = ttk.Button(button_frame, text="Add", command=self.show_input_fields)
         add_button.pack(side="left", padx=5)
-        go_button = ttk.Button(button_frame, text="Go", command=self.execute_search)
-        go_button.pack(side="left", padx=5)
+        self.go_button = ttk.Button(button_frame, text="Go", command=self.execute_search)
+        self.go_button.pack(side="left", padx=5)
         undo_filter_button = ttk.Button(button_frame, text="Undo filters", command=self.undo_filter)
         undo_filter_button.pack(side="left", padx=5)
 
@@ -162,6 +163,7 @@ class TableGUI:
         self.input_frame.pack_forget()
 
     def show_search_fields(self):
+        self.go_button.configure(command=self.execute_search)
         self.input_frame.pack_forget()
         self.create_search_fields()
         self.search_frame.pack(side="top", fill="x", padx=10, pady=10)
@@ -184,7 +186,36 @@ class TableGUI:
         self.df = search_df
         self.update_table()
 
+    def execute_input(self):
+        # Eingabefunktion ausführen
+        df = self.df.copy()
+        input_df = pd.DataFrame(columns=df.columns)
+        for column, entry in self.input_entries.items():
+            word = entry.get()
+            if column in self.string_columns:
+                if len(word)!=0:
+                    input_df.loc[0, column]=word
+                else:
+                    input_df.loc[0, column] = np.NaN
+            elif column in self.integer_columns:
+                if len(word)!=0: 
+                    input_df.loc[0, column]=int(word)
+                else:
+                    input_df.loc[0, column] = np.NaN
+            elif column in self.float_columns:
+                if len(word)!=0:
+                    input_df.loc[0, column]=float(word)
+                else:
+                    input_df.loc[0, column] = np.NaN
+
+        print(input_df)
+
+        self.df = pd.concat([df, input_df])
+        self.undo_df = self.df
+        self.update_table()       
+
     def show_input_fields(self):
+        self.go_button.configure(command=self.execute_input)
         self.search_frame.pack_forget()
         self.create_input_fields()
         self.input_frame.pack(side="top", fill="x", padx=10, pady=10)
