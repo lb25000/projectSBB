@@ -12,10 +12,13 @@ class TableGUI:
 
         # DataFrame einlesen
         self.df = readData()
-        self.undo_df = self.df
 
-        #copy original df, to habe a backup
+        #copy original df, to have a backup
         self.original_df = self.df.copy()
+
+        #copy original df to undo filters
+        self.undo_df = self.original_df.copy()
+
         #definition of numeric and string columns
         self.integer_columns = ["Linie", "Didok-Nummer", "IPID", "FID", "BPUIC"]
         self.float_columns = ["KM", "Perronkantenlänge", "GO_IPID"]
@@ -178,7 +181,6 @@ class TableGUI:
                 if len(word)!=0:
                     search_df = self.filter_Float(self.df, word, column)        
 
-        self.undo_df = self.df
         self.df = search_df
         self.update_table()
 
