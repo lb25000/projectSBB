@@ -31,7 +31,7 @@ class TableGUI:
                                 "end_lon", "end_lat"]
 
 
-        # Frame für die Tabelle
+        # Frame for table
         self.table_frame = ttk.Frame(master)
         self.table_frame.pack(padx=10, pady=10, fill="both", expand=True)
 
@@ -39,9 +39,8 @@ class TableGUI:
         style = ttk.Style()
         style.configure("Treeview", font=('Helvetica', 10), rowheight=25, foreground="black", background="white")
         style.configure("Treeview.Heading", font=('Helvetica', 10), foreground="black", background="#eaeaea",
-                        relief="raised")
-        style.map("Treeview", background=[('selected', '#347083')])
-        #style.layout("Treeview.Row", [('Treeview.Cell', {'sticky': 'nswe'})])  # Linien zwischen den Zellen anzeigen
+                       relief="raised")
+        style.map("Treeview", background=[('selected', '#add8e6')])
 
 
         # Tabelle erstellen
@@ -114,20 +113,26 @@ class TableGUI:
 
 
     def update_table(self):
-        # Entfernen aller Zeilen aus der Tabelle
+        """
+        Updates the table by removing all existing rows and inserting rows from the updated DataFrame.
+        """
         for row in self.table.get_children():
             self.table.delete(row)
-
-        # Wieder einfügen der Zeilen entsprechend des aktualisierten DataFrames
         self.insert_table_rows()
 
     def insert_table_rows(self):
+        """
+        Inserts rows (data) into the table based on the DataFrame.
+        """
         for i, row in self.df.iterrows():
             row = row.fillna('')
             self.table.insert("", "end", values=list(row))
 
     def create_search_fields(self):
-        num_cols = 4  # Anzahl der Spalten für die Suchfelder
+        """
+        Creates search fields for each column in the DataFrame.
+        """
+        num_cols = 4
         for i, col in enumerate(self.df.columns):
             search_label = ttk.Label(self.search_entries_frame, text=f"Search {col}:")
             search_label.grid(row=i // num_cols, column=i % num_cols * 2, sticky="e", padx=(10, 5), pady=5)
@@ -140,7 +145,10 @@ class TableGUI:
         self.search_canvas.config(scrollregion=self.search_canvas.bbox("all"))
 
     def create_input_fields(self):
-        num_cols = 4  # Anzahl der Spalten für die Eingabefelder
+        """
+        Creates input fields for each column in the DataFrame.
+        """
+        num_cols = 4
         for i, col in enumerate(self.df.columns):
             if col != "ID":  # Beispiel: "ID" ist eine Spalte, die nicht bearbeitet werden soll
                 input_label = ttk.Label(self.input_entries_frame, text=f"Enter {col}:")
@@ -149,16 +157,12 @@ class TableGUI:
                 input_entry.grid(row=i // num_cols, column=i % num_cols * 2 + 1, sticky="we", padx=(0, 10), pady=5)
                 self.input_entries[col] = input_entry
 
-
         self.input_canvas.create_window((0, 0), window=self.input_entries_frame, anchor="nw")
         self.input_entries_frame.update_idletasks()  # Für die Berechnung der Größe des Canvas-Widgets
         self.input_canvas.config(scrollregion=self.input_canvas.bbox("all"))
 
     def pack_search_and_input(self):
-        # Suchfelder packen
         self.search_frame.pack_forget()
-
-        # Eingabefelder packen
         self.input_frame.pack_forget()
 
     def show_search_fields(self):
@@ -168,7 +172,11 @@ class TableGUI:
         self.search_frame.pack(side="top", fill="x", padx=10, pady=10)
 
     def execute_search(self):
-        # Suchfunktion ausführen
+        """
+           Executes the search functionality based on the input provided in the search fields.
+           Iterates through each search entry and its corresponding column.Filters the DataFrame
+            based on the search criteria provided.
+           """
         search_df = self.original_df.copy()  # Kopie der ursprünglichen Tabelle erstellen
         for column, entry in self.search_entries.items():
             word = entry.get()
@@ -176,34 +184,38 @@ class TableGUI:
                 if len(word)!=0: 
                     search_df = self.filter_String(self.df, word, column)
             elif column in self.integer_columns:
-                if len(word)!=0: 
+                if len(word) != 0:
                     search_df = self.filter_Integer(self.df, word, column)
             elif column in self.float_columns:
-                if len(word)!=0:
+                if len(word) != 0:
                     search_df = self.filter_Float(self.df, word, column)        
 
         self.df = search_df
         self.update_table()
 
     def execute_input(self):
-        # Eingabefunktion ausführen
+        """
+        Executes the input functionality based on the data provided in the input fields. Iterates
+         through each input entry and its corresponding column.Converts the input data to
+         the appropriate data type. Concatenates the input DataFrame with the original DataFrame.
+        """
         df = self.df.copy()
         input_df = pd.DataFrame(columns=df.columns)
         for column, entry in self.input_entries.items():
             word = entry.get()
             if column in self.string_columns:
-                if len(word)!=0:
-                    input_df.loc[0, column]=word
+                if len(word) != 0:
+                    input_df.loc[0, column] = word
                 else:
                     input_df.loc[0, column] = np.NaN
             elif column in self.integer_columns:
-                if len(word)!=0: 
-                    input_df.loc[0, column]=int(word)
+                if len(word) != 0:
+                    input_df.loc[0, column] = int(word)
                 else:
                     input_df.loc[0, column] = np.NaN
             elif column in self.float_columns:
-                if len(word)!=0:
-                    input_df.loc[0, column]=float(word)
+                if len(word) != 0:
+                    input_df.loc[0, column] = float(word)
                 else:
                     input_df.loc[0, column] = np.NaN
 
@@ -222,7 +234,6 @@ class TableGUI:
 
     def undo_filter(self):
         self.df = self.undo_df
-
         self.update_table()
 
     @staticmethod
