@@ -61,7 +61,6 @@ class TableGUI:
         yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
 
         xscrollbar = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.table.xview)
-        xscrollbar = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.table.xview)
         xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
 
         self.table.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
@@ -73,11 +72,11 @@ class TableGUI:
         self.search_canvas.pack(side="left", fill="both", expand=True)
 
         self.search_entries_frame = ttk.Frame(self.search_canvas)
-        self.search_vscrollbar = ttk.Scrollbar(self.search_frame, orient="vertical", command=self.search_canvas.yview)
-        self.search_vscrollbar.pack(side="right", fill="y")
-        self.input_hscrollbar = ttk.Scrollbar(self.search_frame, orient="horizontal", command=self.search_canvas.xview)
-        self.input_hscrollbar.pack(side="bottom", fill="x")
-        self.search_canvas.configure(xscrollcommand=self.input_hscrollbar.set, yscrollcommand=self.search_vscrollbar.set)
+        yscrollbar = ttk.Scrollbar(self.search_frame, orient="vertical", command=self.search_canvas.yview)
+        yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
+        xscrollbar = ttk.Scrollbar(self.search_frame, orient="horizontal", command=self.search_canvas.xview)
+        xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
+        self.search_canvas.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
 
         self.search_entries = {}  # Initialisierung des search_entries-Attributs
 
@@ -88,11 +87,11 @@ class TableGUI:
         self.input_canvas.pack(side="left", fill="both", expand=True)
 
         self.input_entries_frame = ttk.Frame(self.input_canvas)
-        self.input_vscrollbar = ttk.Scrollbar(self.input_frame, orient="vertical", command=self.input_canvas.yview)
-        self.input_vscrollbar.pack(side="right", fill="y")
-        self.input_hscrollbar = ttk.Scrollbar(self.input_frame, orient="horizontal", command=self.input_canvas.xview)
-        self.input_hscrollbar.pack(side="bottom", fill="x", expand=True)
-        self.input_canvas.configure(xscrollcommand=self.input_hscrollbar.set, yscrollcommand=self.input_vscrollbar.set)
+        yscrollbar = ttk.Scrollbar(self.input_frame, orient="vertical", command=self.input_canvas.yview)
+        yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
+        xscrollbar = ttk.Scrollbar(self.input_frame, orient="horizontal", command=self.input_canvas.xview)
+        xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
+        self.input_canvas.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
 
         self.input_entries = {}  # Initialisierung des input_entries-Attributs
 
@@ -113,11 +112,6 @@ class TableGUI:
         # Packen der Suchfelder und Eingabefelder
         self.pack_search_and_input()
 
-    def apply_string_search_filter(self, event, column):
-        print("Apply string search filter called")
-        word = self.search_entries[column].get()
-        self.df = self.filter_String(self.df, word, column)
-        self.update_table()
 
     def update_table(self):
         # Entfernen aller Zeilen aus der Tabelle
@@ -129,6 +123,7 @@ class TableGUI:
 
     def insert_table_rows(self):
         for i, row in self.df.iterrows():
+            row = row.fillna('')
             self.table.insert("", "end", values=list(row))
 
     def create_search_fields(self):
