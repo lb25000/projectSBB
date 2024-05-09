@@ -208,10 +208,7 @@ class TableGUI:
         self.go_button.configure(command=self.filter_and_plot_coordinates)
         self.input_frame.pack_forget()
         self.search_frame.pack_forget()
-        self.coordinate_frame.pack_forget()
-        self.coordinate_canvas.pack_forget()
         self.create_coordinate_search_fields()
-        self.coordinate_canvas.pack(side="left", fill="both", expand=True)
         self.coordinate_frame.pack(side="top", fill="x", padx=10, pady=10)
 
     def create_coordinate_search_fields(self):
@@ -243,7 +240,6 @@ class TableGUI:
         max_y = float(self.search_entries["end_lat"].get())
 
         self.filter_and_plot_geographic_area(self.original_df, min_x, max_x, min_y, max_y)
-
 
     def filter_and_plot_geographic_area(self, df, min_x, max_x, min_y, max_y):
         """
@@ -293,8 +289,12 @@ class TableGUI:
         m.scatter(x_end, y_end, marker='o', color='b', label='Endpunkt', zorder=5, s=0.5)
         fig = plt.gcf()
 
+        # create a new window
+        map_window = tk.Toplevel(self.master)
+        map_window.title("Map")
+
         # convert to Tkinter Widget
-        canvas = FigureCanvasTkAgg(fig, master=self.coordinate_canvas)
+        canvas = FigureCanvasTkAgg(fig, master=map_window)
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
