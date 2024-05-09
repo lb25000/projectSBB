@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.basemap import Basemap
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 class TableGUI:
@@ -92,6 +95,16 @@ class TableGUI:
 
         self.input_entries = {}  # Initialisierung des input_entries-Attributs
 
+        #coordinates
+
+        self.coordinate_frame = ttk.Frame(master)
+        self.coordinate_canvas = tk.Canvas(self.coordinate_frame)
+        self.coordinate_canvas.pack(side="left", fill="both", expand=True)
+        self.coordinate_entries_frame = ttk.Frame(self.coordinate_canvas)
+        xscrollbar = ttk.Scrollbar(self.coordinate_frame, orient="horizontal", command=self.coordinate_canvas.xview)
+        xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
+        self.coordinate_canvas.configure(xscrollcommand=xscrollbar.set)
+
         # Buttons
         button_frame = ttk.Frame(master)
         button_frame.pack()
@@ -104,8 +117,9 @@ class TableGUI:
         self.go_button.pack(side="left", padx=5)
         undo_filter_button = ttk.Button(button_frame, text="Undo filters", command=self.undo_filter)
         undo_filter_button.pack(side="left", padx=5)
+        plot_coordinates_button = ttk.Button(button_frame, text="Plot coordinates", command=self.show_coordinate_search)
+        plot_coordinates_button.pack(side="left", padx=5)
 
-        # Packen der Suchfelder und Eingabefelder
         self.pack_search_and_input()
 
     def update_table(self):
@@ -137,7 +151,7 @@ class TableGUI:
             self.search_entries[col] = search_entry
 
         self.search_canvas.create_window((0, 0), window=self.search_entries_frame, anchor="nw")
-        self.search_entries_frame.update_idletasks()  # Für die Berechnung der Größe des Canvas-Widgets
+        self.search_entries_frame.update_idletasks()
         self.search_canvas.config(scrollregion=self.search_canvas.bbox("all"))
 
     def create_input_fields(self):
@@ -164,6 +178,7 @@ class TableGUI:
     def show_search_fields(self):
         self.go_button.configure(command=self.execute_search)
         self.input_frame.pack_forget()
+        self.coordinate_frame.pack_forget()
         self.create_search_fields()
         self.search_frame.pack(side="top", fill="x", padx=10, pady=10)
 
@@ -188,6 +203,102 @@ class TableGUI:
 
         self.df = search_df
         self.update_table()
+
+    def show_coordinate_search(self):
+        self.go_button.configure(command=self.filter_and_plot_coordinates)
+        self.input_frame.pack_forget()
+        self.search_frame.pack_forget()
+        self.coordinate_frame.pack_forget()
+        self.coordinate_canvas.pack_forget()
+        self.create_coordinate_search_fields()
+        self.coordinate_canvas.pack(side="left", fill="both", expand=True)
+        self.coordinate_frame.pack(side="top", fill="x", padx=10, pady=10)
+
+    def create_coordinate_search_fields(self):
+        """
+        Creates search fields for start and end coordinates.
+        """
+        num_cols = 4
+        coordinate_columns = ["start_lat", "start_long", "end_lat", "end_long"]
+        for i, col in enumerate(coordinate_columns):
+            search_label = ttk.Label(self.coordinate_entries_frame, text=f"Search {col}:")
+            search_label.grid(row=i // num_cols, column=i % num_cols * 2, sticky="e", padx=(10, 5), pady=5)
+            search_entry = ttk.Entry(self.coordinate_entries_frame)
+            search_entry.grid(row=i // num_cols, column=i % num_cols * 2 + 1, sticky="we", padx=(0, 10), pady=5)
+            self.search_entries[col] = search_entry
+
+        self.coordinate_canvas.create_window((0, 0), window=self.coordinate_entries_frame, anchor="nw")
+        self.coordinate_entries_frame.update_idletasks()
+        self.coordinate_canvas.config(scrollregion=self.coordinate_canvas.bbox("all"))
+
+
+    def filter_and_plot_coordinates(self):
+        """
+        Takes input from user for coordinates and convert to float.
+        """
+
+        min_x = float(self.search_entries["start_long"].get())
+        max_x = float(self.search_entries["end_long"].get())
+        min_y = float(self.search_entries["start_lat"].get())
+        max_y = float(self.search_entries["end_lat"].get())
+
+        self.filter_and_plot_geographic_area(self.original_df, min_x, max_x, min_y, max_y)
+
+
+    def filter_and_plot_geographic_area(self, df, min_x, max_x, min_y, max_y):
+        """
+        Filters the DataFrame for entries that are located in a specific geographical area,
+        and displays the results graphically.
+
+        :param df: DataFrame to be filtered.
+        :param min_x: Minimum x-coordinate of the geographical area (LV95).
+        :param max_x: Maximum x-coordinate of the geographical area (LV95).
+        :param min_y: Minimum y-coordinate of the geographical area (LV95).
+        :param max_y: Maximum y-coordinate of the geographical area (LV95).
+        """
+
+        switzerland_coords = {
+            'lat_0': 46.8182,
+            'lon_0': 8.2275,
+            'llcrnrlon': 5.9561,
+            'llcrnrlat': 45.818,
+            'urcrnrlon': 10.4921,
+            'urcrnrlat': 47.8085,
+        }
+        # base map for switzerland
+        m = Basemap(**switzerland_coords, projection='merc', resolution='h')
+
+        df['start_lat'] = df['start_lat'].astype(float)
+        df['end_lat'] = df['end_lat'].astype(float)
+        df['start_long'] = df['start_long'].astype(float)
+        df['end_long'] = df['end_long'].astype(float)
+
+        # Filtering the DataFrame by coordinates in the geographical area
+        filtered_df = df[(df['start_lat'] >= min_y) & (df['start_lat'] <= max_y) &
+                         (df['start_long'] >= min_x) & (df['start_long'] <= max_x) |
+                         (df['end_lat'] >= min_y) & (df['end_lat'] <= max_y) &
+                         (df['end_long'] >= min_x) & (df['end_long'] <= max_x)]
+
+        # transform coordinates into format vor base map
+        x_start, y_start = m(filtered_df['start_long'].values, filtered_df['start_lat'].values)
+        x_end, y_end = m(filtered_df['end_long'].values, filtered_df['end_lat'].values)
+
+        # draw borders
+        m.drawcoastlines()
+        m.drawcountries()
+        m.drawmapboundary()
+
+        # scatter coordinates
+        m.scatter(x_start, y_start, marker='o', color='b', label='Startpunkt', zorder=5, s=0.5)
+        m.scatter(x_end, y_end, marker='o', color='b', label='Endpunkt', zorder=5, s=0.5)
+        fig = plt.gcf()
+
+        # convert to Tkinter Widget
+        canvas = FigureCanvasTkAgg(fig, master=self.coordinate_canvas)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+
 
     def execute_input(self):
         """
@@ -224,6 +335,7 @@ class TableGUI:
     def show_input_fields(self):
         self.go_button.configure(command=self.execute_input)
         self.search_frame.pack_forget()
+        self.coordinate_frame.pack_forget()
         self.create_input_fields()
         self.input_frame.pack(side="top", fill="x", padx=10, pady=10)
 
@@ -285,12 +397,11 @@ def readData():
     end_coords = df_perronkante['2_koord'].str.split(',', expand=True)
 
     # Renaming columns
-    start_coords.columns = ['start_lon', 'start_lat']
-    end_coords.columns = ['end_lon', 'end_lat']
+    start_coords.columns = ['start_lat', 'start_long']
+    end_coords.columns = ['end_lat', 'end_long']
 
     # Concatenating start and end coordinates with original DataFrame
     df_perronkante = pd.concat([df_perronkante, start_coords, end_coords], axis=1)
-
     df_perronkante = df_perronkante.drop(['1_koord', '2_koord'], axis='columns')
 
     return df_perronkante
