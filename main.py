@@ -291,7 +291,7 @@ class TableGUI:
 
         # create a new window
         map_window = tk.Toplevel(self.master)
-        map_window.title("Map")
+        map_window.title("Stations within the searched coordinates ")
 
         # convert to Tkinter Widget
         canvas = FigureCanvasTkAgg(fig, master=map_window)
