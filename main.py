@@ -228,16 +228,30 @@ class TableGUI:
         self.coordinate_entries_frame.update_idletasks()
         self.coordinate_canvas.config(scrollregion=self.coordinate_canvas.bbox("all"))
 
-
     def filter_and_plot_coordinates(self):
         """
-        Takes input from user for coordinates and convert to float.
+        Takes input from user for coordinates and converts to float.
         """
 
-        min_x = float(self.search_entries["start_long"].get())
-        max_x = float(self.search_entries["end_long"].get())
-        min_y = float(self.search_entries["start_lat"].get())
-        max_y = float(self.search_entries["end_lat"].get())
+        # check if all values are present
+        if (
+                not self.search_entries["start_long"].get()
+                or not self.search_entries["end_long"].get()
+                or not self.search_entries["start_lat"].get()
+                or not self.search_entries["end_lat"].get()
+        ):
+            self.show_feedback_window("All four coordinate values are required.")
+            return
+        # convert to float and check if values are valide input
+        try:
+            min_x = float(self.search_entries["start_long"].get())
+            max_x = float(self.search_entries["end_long"].get())
+            min_y = float(self.search_entries["start_lat"].get())
+            max_y = float(self.search_entries["end_lat"].get())
+        except ValueError:
+            self.show_feedback_window("Invalid input for coordinate values.")
+            return
+
 
         self.filter_and_plot_geographic_area(self.original_df, min_x, max_x, min_y, max_y)
 
@@ -316,17 +330,27 @@ class TableGUI:
                 else:
                     input_df.loc[0, column] = np.NaN
             elif column in self.integer_columns:
-                if len(word) != 0:
+                if len(word) != 0 and word.isdigit():
                     input_df.loc[0, column] = int(word)
-                else:
+                elif len(word) == 0:
                     input_df.loc[0, column] = np.NaN
+                else:
+                    self.show_feedback_window(f"Invalid input for column '{column}'. Please enter an integer value.")
+                    return
             elif column in self.float_columns:
-                if len(word) != 0:
+                if len(word) != 0 and (word.replace('.', '', 1).isdigit() or word.replace(',', '', 1).isdigit()):
                     input_df.loc[0, column] = float(word)
-                else:
+                elif len(word) == 0:
                     input_df.loc[0, column] = np.NaN
+                else:
+                    self.show_feedback_window(f"Invalid input for column '{column}'. Please enter a float value.")
+                    return
 
         print(input_df)
+
+        if input_df.isnull().values.all():
+            self.show_feedback_window("Please enter values for at least one column.")
+            return
 
         self.df = pd.concat([df, input_df])
         self.undo_df = self.df
@@ -384,6 +408,16 @@ class TableGUI:
             line_df = df[df[columnName] == float(word)]
 
         return line_df
+
+    def show_feedback_window(self, message):
+        """
+        opens a feedback window which shows the user what is incorrect about the input
+        :param message: indicates the type and nature of the error
+        """
+        feedback_window = tk.Toplevel(self.master)
+        feedback_window.title("Feedback")
+        feedback_label = ttk.Label(feedback_window, text=message)
+        feedback_label.pack(padx=10, pady=10)
 
 
 def readData():
