@@ -121,6 +121,7 @@ class TableGUI:
         plot_coordinates_button.pack(side="left", padx=5)
 
         self.pack_search_and_input()
+        self.column_stats = {}
 
     def update_table(self):
         """
@@ -134,9 +135,28 @@ class TableGUI:
         """
         Inserts rows (data) into the table based on the DataFrame.
         """
+        for col in self.df.columns:
+            self.table.heading(col, text=col, command=lambda c=col: self.show_column_stats(c))  # bind command to header
+
         for i, row in self.df.iterrows():
             row = row.fillna('')
             self.table.insert("", "end", values=list(row))
+
+    def calculate_column_stats(self, column_name):
+        column = self.df[column_name]
+        if column_name in self.integer_columns or column_name in self.float_columns:
+            return {
+                "min": column.min(),
+                "max": column.max(),
+                "mean": column.mean()
+            }
+        return None
+
+    def show_column_stats(self, column_name):
+        stats = self.calculate_column_stats(column_name)
+        if stats:
+            message = f"Min: {stats['min']}, Max: {stats['max']}, Mean: {stats['mean']}"
+            self.show_feedback_window(message)
 
     def create_search_fields(self):
         """
@@ -418,6 +438,9 @@ class TableGUI:
         feedback_window.title("Feedback")
         feedback_label = ttk.Label(feedback_window, text=message)
         feedback_label.pack(padx=10, pady=10)
+
+
+
 
 
 def readData():
