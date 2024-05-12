@@ -106,19 +106,8 @@ class TableGUI:
         self.coordinate_canvas.configure(xscrollcommand=xscrollbar.set)
 
         # Buttons
-        button_frame = ttk.Frame(master)
-        button_frame.pack()
-        search_button = ttk.Button(button_frame, text="Search", command=self.show_search_fields)
-        search_button.pack(side="left", padx=5)
-        add_button = ttk.Button(button_frame, text="Add", command=self.show_input_fields)
-        add_button.pack(side="left", padx=5)
-
-        self.go_button = ttk.Button(button_frame, text="Go", command=self.execute_search)
-        self.go_button.pack(side="left", padx=5)
-        undo_filter_button = ttk.Button(button_frame, text="Undo filters", command=self.undo_filter)
-        undo_filter_button.pack(side="left", padx=5)
-        plot_coordinates_button = ttk.Button(button_frame, text="Plot coordinates", command=self.show_coordinate_search)
-        plot_coordinates_button.pack(side="left", padx=5)
+        self.go_button = None
+        self.create_buttons()
 
         self.pack_search_and_input()
 
@@ -141,6 +130,25 @@ class TableGUI:
         for col in self.df.columns:
             self.table.heading(col, text=col, command=lambda c=col: self.show_column_stats(c))
             self.table.bind("<Motion>", change_cursor, "+")
+
+    def create_buttons(self):
+        button_frame = ttk.Frame(self.master)
+        button_frame.pack()
+
+        buttons = [
+            ("Search", self.show_search_fields),
+            ("Add", self.show_input_fields),
+            ("Go", self.execute_search),
+            ("Undo filters", self.undo_filter),
+            ("Plot coordinates", self.show_coordinate_search)
+        ]
+        for text, command in buttons:
+            if text == "Go":
+                self.go_button = ttk.Button(button_frame, text=text, command=command)
+                self.go_button.pack(side="left", padx=5)
+            else:
+                button = ttk.Button(button_frame, text=text, command=command)
+                button.pack(side="left", padx=5)
 
     def update_table(self):
         """
