@@ -45,6 +45,36 @@ class TableGUI:
         style.map("Treeview", background=[('selected', '#add8e6')])
 
         # Tabelle erstellen
+        self.create_table()
+
+        # Zeilen in der Tabelle einfügen
+        self.insert_table_rows()
+
+        # Scrollbars für die Tabelle hinzufügen
+        self.create_scrollbars_in_table()
+
+        self.search_frame = ttk.Frame(master)
+        self.input_frame = ttk.Frame(master)
+        self.coordinate_frame = ttk.Frame(master)
+
+        # Canvas
+        self.search_canvas = self.create_scrollable_canvas(self.search_frame) # Suchfelder Frame mit Canvas für Scrollbar
+        self.input_canvas = self.create_scrollable_canvas(self.input_frame) # Eingabefelder Frame mit Canvas für Scrollbar
+        self.coordinate_canvas = self.create_scrollable_canvas(self.coordinate_frame) # Koordinatenfelder Frame mit Canvas für Scrollbar
+
+        # Entries
+        self.search_entries = {}
+        self.input_entries = {}
+        self.coordinate_entries = {}
+
+        # Buttons
+        self.create_buttons()
+
+        self.pack_search_and_input()
+        self.bind_column_hover()
+
+
+    def create_table(self):
         self.table = ttk.Treeview(self.table_frame, style="Treeview")
         self.table["columns"] = list(self.df.columns)
         self.table["show"] = "headings"
@@ -53,94 +83,55 @@ class TableGUI:
             self.table.column(col, width=100, minwidth=50, anchor="center")  # Spaltenbreite anpassen
         self.table.pack(side="left", fill="both", expand=True)
 
-        # Zeilen in der Tabelle einfügen
-        self.insert_table_rows()
-
-        # Scrollbars für die Tabelle hinzufügen
+    def create_scrollbars_in_table(self):
         yscrollbar = ttk.Scrollbar(self.table_frame, orient="vertical", command=self.table.yview)
         yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
-
         xscrollbar = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.table.xview)
         xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
-
         self.table.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
 
-        # Suchfelder Frame mit Canvas für Scrollbar
-        self.search_frame = ttk.Frame(master)
+    def create_scrollable_canvas(self, frame):
+        canvas = tk.Canvas(frame)
+        canvas.pack(side="left", fill="both", expand=True)
 
-        self.search_canvas = tk.Canvas(self.search_frame)
-        self.search_canvas.pack(side="left", fill="both", expand=True)
-
-        self.search_entries_frame = ttk.Frame(self.search_canvas)
-        yscrollbar = ttk.Scrollbar(self.search_frame, orient="vertical", command=self.search_canvas.yview)
+        if frame == self.search_frame:
+            self.search_entries_frame = ttk.Frame(canvas)
+        elif frame == self.input_frame:
+            self.input_entries_frame = ttk.Frame(canvas)
+        elif frame == self.coordinate_frame:
+            self.coordinate_entries_frame = ttk.Frame(canvas)
+        
+        entries_frame = ttk.Frame(canvas)
+        yscrollbar = ttk.Scrollbar(frame, orient="vertical", command=canvas.yview)
         yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
-        xscrollbar = ttk.Scrollbar(self.search_frame, orient="horizontal", command=self.search_canvas.xview)
+        xscrollbar = ttk.Scrollbar(frame, orient="horizontal", command=canvas.xview)
         xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
-        self.search_canvas.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
+        canvas.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
 
-        self.search_entries = {}  # Initialisierung des search_entries-Attributs
+        canvas.create_window((0, 0), window=entries_frame, anchor="nw")
+        entries_frame.update_idletasks()
+        canvas.config(scrollregion=canvas.bbox("all"))
 
-        # Eingabefelder Frame mit Canvas für Scrollbar
-        self.input_frame = ttk.Frame(master)
+        return canvas
 
-        self.input_canvas = tk.Canvas(self.input_frame)
-        self.input_canvas.pack(side="left", fill="both", expand=True)
-
-        self.input_entries_frame = ttk.Frame(self.input_canvas)
-        yscrollbar = ttk.Scrollbar(self.input_frame, orient="vertical", command=self.input_canvas.yview)
-        yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
-        xscrollbar = ttk.Scrollbar(self.input_frame, orient="horizontal", command=self.input_canvas.xview)
-        xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
-        self.input_canvas.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
-
-        self.input_entries = {}  # Initialisierung des input_entries-Attributs
-
-        #coordinates
-
-        self.coordinate_frame = ttk.Frame(master)
-        self.coordinate_canvas = tk.Canvas(self.coordinate_frame)
-        self.coordinate_canvas.pack(side="left", fill="both", expand=True)
-        self.coordinate_entries_frame = ttk.Frame(self.coordinate_canvas)
-        xscrollbar = ttk.Scrollbar(self.coordinate_frame, orient="horizontal", command=self.coordinate_canvas.xview)
-        xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
-        self.coordinate_canvas.configure(xscrollcommand=xscrollbar.set)
-
-        # Buttons
-        button_frame = ttk.Frame(master)
+    def create_buttons(self):
+        button_frame = ttk.Frame(self.master)
         button_frame.pack()
-        search_button = ttk.Button(button_frame, text="Search", command=self.show_search_fields)
-        search_button.pack(side="left", padx=5)
-        add_button = ttk.Button(button_frame, text="Add", command=self.show_input_fields)
-        add_button.pack(side="left", padx=5)
 
-        self.go_button = ttk.Button(button_frame, text="Go", command=self.execute_search)
-        self.go_button.pack(side="left", padx=5)
-        undo_filter_button = ttk.Button(button_frame, text="Undo filters", command=self.undo_filter)
-        undo_filter_button.pack(side="left", padx=5)
-        plot_coordinates_button = ttk.Button(button_frame, text="Plot coordinates", command=self.show_coordinate_search)
-        plot_coordinates_button.pack(side="left", padx=5)
-
-        self.pack_search_and_input()
-
-        def change_cursor(event):
-            """
-            Change cursor if it is above a column that can be clicked on
-            :param event:
-            """
-            widget = event.widget
-            col = widget.identify_column(event.x)
-            if col:
-                col_index = int(col.replace("#", "")) - 1  # get column index
-                col_name = self.df.columns[col_index]  # get column name
-                if col_name in self.integer_columns or col_name in self.float_columns:
-                    widget.config(cursor="hand1")
-                else:
-                    widget.config(cursor="")
-
-
-        for col in self.df.columns:
-            self.table.heading(col, text=col, command=lambda c=col: self.show_column_stats(c))
-            self.table.bind("<Motion>", change_cursor, "+")
+        buttons = [
+            ("Search", self.show_search_fields),
+            ("Add", self.show_input_fields),
+            ("Go", self.execute_search),
+            ("Undo filters", self.undo_filter),
+            ("Plot coordinates", self.show_coordinate_search)
+        ]
+        for text, command in buttons:
+            if text == "Go":
+                self.go_button = ttk.Button(button_frame, text=text, command=command)
+                self.go_button.pack(side="left", padx=5)
+            else:
+                button = ttk.Button(button_frame, text=text, command=command)
+                button.pack(side="left", padx=5)
 
     def update_table(self):
         """
@@ -210,9 +201,42 @@ class TableGUI:
         self.input_entries_frame.update_idletasks()  # Für die Berechnung der Größe des Canvas-Widgets
         self.input_canvas.config(scrollregion=self.input_canvas.bbox("all"))
 
+    def create_coordinate_search_fields(self):
+        """
+        Creates search fields for start and end coordinates.
+        """
+        coordinate_columns = ["start_lat", "start_long", "end_lat", "end_long"]
+        for i, col in enumerate(coordinate_columns):
+            search_label = ttk.Label(self.coordinate_entries_frame, text=f"Search {col}:")
+            search_label.pack(side="left", padx=(10, 5), pady=5)
+            search_entry = ttk.Entry(self.coordinate_entries_frame)
+            search_entry.pack(side="left", padx=(0, 10), pady=5)
+            self.search_entries[col] = search_entry
+
+        self.coordinate_canvas.create_window((0, 0), window=self.coordinate_entries_frame, anchor="nw")
+        self.coordinate_entries_frame.update_idletasks()
+        self.coordinate_canvas.config(scrollregion=self.coordinate_canvas.bbox("all"))
+
     def pack_search_and_input(self):
         self.search_frame.pack_forget()
         self.input_frame.pack_forget()
+        self.coordinate_frame.pack_forget()
+
+    def bind_column_hover(self):
+        def change_cursor(event):
+            """
+            Change cursor if it is above a column that can be clicked on
+            :param event:
+            """
+            widget = event.widget
+            col = widget.identify_column(event.x)
+            if col:
+                col_index = int(col.replace("#", "")) - 1
+                col_name = self.df.columns[col_index]
+                if col_name in self.integer_columns or col_name in self.float_columns:
+                    widget.config(cursor="hand1")
+                else:
+                    widget.config(cursor="")
 
     def show_search_fields(self):
         self.go_button.configure(command=self.execute_search)
@@ -220,6 +244,20 @@ class TableGUI:
         self.coordinate_frame.pack_forget()
         self.create_search_fields()
         self.search_frame.pack(side="top", fill="x", padx=10, pady=10)
+
+    def show_input_fields(self):
+        self.go_button.configure(command=self.execute_input)
+        self.search_frame.pack_forget()
+        self.coordinate_frame.pack_forget()
+        self.create_input_fields()
+        self.input_frame.pack(side="top", fill="x", padx=10, pady=10)
+
+    def show_coordinate_search(self):
+        self.go_button.configure(command=self.filter_and_plot_coordinates)
+        self.input_frame.pack_forget()
+        self.search_frame.pack_forget()
+        self.create_coordinate_search_fields()
+        self.coordinate_frame.pack(side="top", fill="x", padx=10, pady=10)
 
     def execute_search(self):
         """
@@ -242,30 +280,6 @@ class TableGUI:
 
         self.df = search_df
         self.update_table()
-
-    def show_coordinate_search(self):
-        self.go_button.configure(command=self.filter_and_plot_coordinates)
-        self.input_frame.pack_forget()
-        self.search_frame.pack_forget()
-        self.create_coordinate_search_fields()
-        self.coordinate_frame.pack(side="top", fill="x", padx=10, pady=10)
-
-    def create_coordinate_search_fields(self):
-        """
-        Creates search fields for start and end coordinates.
-        """
-        num_cols = 4
-        coordinate_columns = ["start_lat", "start_long", "end_lat", "end_long"]
-        for i, col in enumerate(coordinate_columns):
-            search_label = ttk.Label(self.coordinate_entries_frame, text=f"Search {col}:")
-            search_label.grid(row=i // num_cols, column=i % num_cols * 2, sticky="e", padx=(10, 5), pady=5)
-            search_entry = ttk.Entry(self.coordinate_entries_frame)
-            search_entry.grid(row=i // num_cols, column=i % num_cols * 2 + 1, sticky="we", padx=(0, 10), pady=5)
-            self.search_entries[col] = search_entry
-
-        self.coordinate_canvas.create_window((0, 0), window=self.coordinate_entries_frame, anchor="nw")
-        self.coordinate_entries_frame.update_idletasks()
-        self.coordinate_canvas.config(scrollregion=self.coordinate_canvas.bbox("all"))
 
     def filter_and_plot_coordinates(self):
         """
@@ -351,8 +365,6 @@ class TableGUI:
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-
-
     def execute_input(self):
         """
         Executes the input functionality based on the data provided in the input fields. Iterates
@@ -395,12 +407,6 @@ class TableGUI:
         self.undo_df = self.df
         self.update_table()
 
-    def show_input_fields(self):
-        self.go_button.configure(command=self.execute_input)
-        self.search_frame.pack_forget()
-        self.coordinate_frame.pack_forget()
-        self.create_input_fields()
-        self.input_frame.pack(side="top", fill="x", padx=10, pady=10)
 
     def undo_filter(self):
         self.df = self.undo_df
@@ -457,8 +463,6 @@ class TableGUI:
         feedback_window.title("Feedback")
         feedback_label = ttk.Label(feedback_window, text=message)
         feedback_label.pack(padx=10, pady=10)
-
-
 
 
 
