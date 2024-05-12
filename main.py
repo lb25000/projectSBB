@@ -86,26 +86,8 @@ class TableGUI:
         self.create_buttons()
 
         self.pack_search_and_input()
+        self.bind_column_hover()
 
-        def change_cursor(event):
-            """
-            Change cursor if it is above a column that can be clicked on
-            :param event:
-            """
-            widget = event.widget
-            col = widget.identify_column(event.x)
-            if col:
-                col_index = int(col.replace("#", "")) - 1  # get column index
-                col_name = self.df.columns[col_index]  # get column name
-                if col_name in self.integer_columns or col_name in self.float_columns:
-                    widget.config(cursor="hand1")
-                else:
-                    widget.config(cursor="")
-
-
-        for col in self.df.columns:
-            self.table.heading(col, text=col, command=lambda c=col: self.show_column_stats(c))
-            self.table.bind("<Motion>", change_cursor, "+")
 
     def create_scrollable_canvas(self, frame):
         canvas = tk.Canvas(frame)
@@ -219,6 +201,23 @@ class TableGUI:
     def pack_search_and_input(self):
         self.search_frame.pack_forget()
         self.input_frame.pack_forget()
+        self.coordinate_frame.pack_forget()
+
+    def bind_column_hover(self):
+        def change_cursor(event):
+            """
+            Change cursor if it is above a column that can be clicked on
+            :param event:
+            """
+            widget = event.widget
+            col = widget.identify_column(event.x)
+            if col:
+                col_index = int(col.replace("#", "")) - 1
+                col_name = self.df.columns[col_index]
+                if col_name in self.integer_columns or col_name in self.float_columns:
+                    widget.config(cursor="hand1")
+                else:
+                    widget.config(cursor="")
 
     def show_search_fields(self):
         self.go_button.configure(command=self.execute_search)
