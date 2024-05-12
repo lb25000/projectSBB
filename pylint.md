@@ -1,62 +1,124 @@
-## Pylint Status am 10. May 2024
+## Pylint Status am 11. May 2024
+```
+***- main.py:32:0: C0301: Line too long (103/100) (line-too-long)***
+***- main.py:33:0: C0301: Line too long (102/100) (line-too-long)***
+***- main.py:34:0: C0301: Line too long (117/100) (line-too-long)***
+```
+````python
+self.string_columns = ["Abkuerzung Bahnhof", "Haltestellen Name", "Perrontyp", "Perron Nummer",
+                               "Kundengleisnummer", "Perronkantenhöhe", "Bemerkung Höhe", "Hilfstritt"
+                                                                                          "Höhenverlauf", "Material",
+                               "Bemerkung Material", "Kantenart",
+                               "Bemerkung Kantenkrone", "Auftritt", "lod", "start_lon", "start_lat",
+                               "end_lon", "end_lat"]
 
-- **main.py:29:0**: C0301: Line too long (103/100) (line-too-long)
-- **main.py:30:0**: C0301: Line too long (102/100) (line-too-long)
-- **main.py:31:0**: C0301: Line too long (117/100) (line-too-long)
-- **main.py:42:0**: C0301: Line too long (113/100) (line-too-long)
-- **main.py:43:0**: C0301: Line too long (109/100) (line-too-long)
-- **main.py:53:0**: C0301: Line too long (101/100) (line-too-long)
-- **main.py:75:0**: C0301: Line too long (106/100) (line-too-long)
-- **main.py:77:0**: C0301: Line too long (108/100) (line-too-long)
-- **main.py:90:0**: C0301: Line too long (104/100) (line-too-long)
-- **main.py:92:0**: C0301: Line too long (106/100) (line-too-long)
-- **main.py:104:0**: C0301: Line too long (116/100) (line-too-long)
-- **main.py:120:0**: C0301: Line too long (120/100) (line-too-long)
-- **main.py:147:0**: C0301: Line too long (102/100) (line-too-long)
-- **main.py:158:0**: C0301: Line too long (120/100) (line-too-long)
-- **main.py:187:0**: C0301: Line too long (107/100) (line-too-long)
-- **main.py:189:0**: C0301: Line too long (112/100) (line-too-long)
-- **main.py:204:0**: C0301: Line too long (110/100) (line-too-long)
-- **main.py:206:0**: C0301: Line too long (115/100) (line-too-long)
-- **main.py:210:0**: C0301: Line too long (102/100) (line-too-long)
-- **main.py:261:0**: C0301: Line too long (107/100) (line-too-long)
-- **main.py:263:0**: C0301: Line too long (112/100) (line-too-long)
-- **main.py:266:0**: C0301: Line too long (103/100) (line-too-long)
-- **main.py:377:0**: C0301: Line too long (117/100) (line-too-long)
-- **main.py:380:0**: C0301: Line too long (113/100) (line-too-long)
-- **main.py:385:0**: C0301: Line too long (114/100) (line-too-long)
-- **main.py:418:0**: C0325: Unnecessary parens after 'if' keyword (superfluous-parens)
-- **main.py:432:0**: C0325: Unnecessary parens after 'if' keyword (superfluous-parens)
-- **main.py:446:0**: C0325: Unnecessary parens after 'if' keyword (superfluous-parens)
-- **main.py:493:0**: C0304: Final newline missing (missing-final-newline)
-- **main.py:1:0**: C0114: Missing module docstring (missing-module-docstring)
-- **main.py:10:0**: C0115: Missing class docstring (missing-class-docstring)
-- **main.py:10:0**: R0902: Too many instance attributes (21/7) (too-many-instance-attributes)
-- **main.py:11:4**: R0915: Too many statements (79/50) (too-many-statements)
-- **main.py:160:12**: W0612: Unused variable 'i' (unused-variable)
-- **main.py:164:4**: C0116: Missing function or method docstring (missing-function-docstring)
-- **main.py:174:4**: C0116: Missing function or method docstring (missing-function-docstring)
-- **main.py:213:4**: C0116: Missing function or method docstring (missing-function-docstring)
-- **main.py:217:4**: C0116: Missing function or method docstring (missing-function-docstring)
-- **main.py:246:4**: C0116: Missing function or method docstring (missing-function-docstring)
-- **main.py:297:4**: R0913: Too many arguments (6/5) (too-many-arguments)
-- **main.py:297:4**: R0914: Too many local variables (16/15) (too-many-locals)
-- **main.py:356:4**: R0912: Too many branches (13/12) (too-many-branches)
-- **main.py:398:4**: C0116: Missing function or method docstring (missing-function-docstring)
-- **main.py:405:4**: C0116: Missing function or method docstring (missing-function-docstring)
-- **main.py:410:4**: C0103: Method name "filter_String" doesn't conform to snake_case naming style (invalid-name)
-- **main.py:410:37**: C0103: Argument name "columnName" doesn't conform to snake_case naming style (invalid-name)
-- **main.py:418:12**: C0121: Comparison 'word != None' should be 'word is not None' (singleton-comparison)
-- **main.py:424:4**: C0103: Method name "filter_Integer" doesn't conform to snake_case naming style (invalid-name)
-- **main.py:424:38**: C0103: Argument name "columnName" doesn't conform to snake_case naming style (invalid-name)
-- **main.py:432:12**: C0121: Comparison 'word != None' should be 'word is not None' (singleton-comparison)
-- **main.py:438:4**: C0103: Method name "filter_Float" doesn't conform to snake_case naming style (invalid-name)
-- **main.py:438:36**: C0103: Argument name "columnName" doesn't conform to snake_case naming style (invalid-name)
-- **main.py:446:12**: C0121: Comparison 'word != None' should be 'word is not None' (singleton-comparison)
-- **main.py:465:0**: C0116: Missing function or method docstring (missing-function-docstring)
-- **main.py:465:0**: C0103: Function name "readData" doesn't conform to snake_case naming style (invalid-name)
-- **main.py:486:0**: C0116: Missing function or method docstring (missing-function-docstring)
-- **main.py:488:4**: W0612: Unused variable 'app' (unused-variable)
+````
+changed to:
+```python
+self.string_columns = ["Abkuerzung Bahnhof", "Haltestellen Name", "Perrontyp",
+                               "Perron Nummer", "Kundengleisnummer", "Perronkantenhöhe",
+                               "Bemerkung Höhe", "Hilfstritt", "Höhenverlauf", "Material",
+                               "Bemerkung Material", "Kantenart", "Bemerkung Kantenkrone",
+                               "Auftritt", "lod", "start_lon", "start_lat",
+                               "end_lon", "end_lat"]
+
+```
+
+- **main.py:45:0**: C0301: Line too long (113/100) (line-too-long)
+- **main.py:46:0**: C0301: Line too long (109/100) (line-too-long)
+- **main.py:64:0**: C0301: Line too long (121/100) (line-too-long)
+- **main.py:65:0**: C0301: Line too long (122/100) (line-too-long)
+- **main.py:66:0**: C0301: Line too long (136/100) (line-too-long)
+- **main.py:89:0**: C0301: Line too long (101/100) (line-too-long)
+
+***- main.py:115:0: C0303: Trailing whitespace (trailing-whitespace)***
+
+````python
+  elif frame == self.coordinate_frame:
+            self.coordinate_entries_frame = ttk.Frame(canvas)
+        
+        entries_frame = ttk.Frame(canvas)
+````
+changed to
+````python
+   elif frame == self.coordinate_frame:
+            self.coordinate_entries_frame = ttk.Frame(canvas)
+        entries_frame = ttk.Frame(canvas)
+````
+- **main.py:153:0**: C0301: Line too long (102/100) (line-too-long)
+- **main.py:164:0**: C0301: Line too long (120/100) (line-too-long)
+- **main.py:199:0**: C0301: Line too long (107/100) (line-too-long)
+- **main.py:201:0**: C0301: Line too long (112/100) (line-too-long)
+- **main.py:216:0**: C0301: Line too long (110/100) (line-too-long)
+- **main.py:218:0**: C0301: Line too long (115/100) (line-too-long)
+- **main.py:222:0**: C0301: Line too long (102/100) (line-too-long)
+- **main.py:237:0**: C0301: Line too long (103/100) (line-too-long)
+- **main.py:413:0**: C0301: Line too long (117/100) (line-too-long)
+- **main.py:416:0**: C0301: Line too long (113/100) (line-too-long)
+- **main.py:421:0**: C0301: Line too long (114/100) (line-too-long)
+
+***- main.py:448:0: C0325: Unnecessary parens after 'if' keyword (superfluous-parens)***
+***- main.py:462:0: C0325: Unnecessary parens after 'if' keyword (superfluous-parens)***
+***- main.py:476:0: C0325: Unnecessary parens after 'if' keyword (superfluous-parens)***
+
+```python
+if(word != None):
+```
+changed to
+```python
+if word is not None:
+```
+
+
+***- main.py:521:0: C0304: Final newline missing (missing-final-newline***
+```
+added new line
+```
+
+
+***- **main.py:1:0**: C0114: Missing module docstring (missing-module-docstring)***
+inserted
+```python
+"""
+This module implements a GUI application for interacting with tabular data.
+"""
+```
+- **main.py:10:0**: R0902: Too many instance attributes (22/7) (too-many-instance-attributes)
+- **main.py:166:12**: W0612: Unused variable 'i' (unused-variable)
+- **main.py:230:12**: W0612: Unused variable 'i' (unused-variable)
+- **main.py:249:4**: C0116: Missing function or method docstring (missing-function-docstring)
+- **main.py:250:8**: W0612: Unused variable 'change_cursor' (unused-variable)
+- **main.py:265:4**: C0116: Missing function or method docstring (missing-function-docstring)
+- **main.py:272:4**: C0116: Missing function or method docstring (missing-function-docstring)
+- **main.py:279:4**: C0116: Missing function or method docstring (missing-function-docstring)
+- **main.py:335:4**: R0913: Too many arguments (6/5) (too-many-arguments)
+- **main.py:335:4**: R0914: Too many local variables (16/15) (too-many-locals)
+- **main.py:392:4**: R0912: Too many branches (13/12) (too-many-branches)
+- **main.py:435:4**: C0116: Missing function or method docstring (missing-function-docstring)
+- **main.py:440:4**: C0103: Method name "filter_String" doesn't conform to snake_case naming style (invalid-name)
+- **main.py:440:37**: C0103: Argument name "columnName" doesn't conform to snake_case naming style (invalid-name)
+- 
+
+***- main.py:448:12: C0121: Comparison 'word != None' should be 'word is not None' (singleton-comparison)***
+```python
+if (word != None):
+```
+````python
+if word is not None:
+````
+
+- **main.py:454:4**: C0103: Method name "filter_Integer" doesn't conform to snake_case naming style (invalid-name)
+- **main.py:454:38**: C0103: Argument name "columnName" doesn't conform to snake_case naming style (invalid-name)
+- **main.py:462:12**: C0121: Comparison 'word != None' should be 'word is not None' (singleton-comparison)
+- **main.py:468:4**: C0103: Method name "filter_Float" doesn't conform to snake_case naming style (invalid-name)
+- **main.py:468:36**: C0103: Argument name "columnName" doesn't conform to snake_case naming style (invalid-name)
+- **main.py:476:12**: C0121: Comparison 'word != None' should be 'word is not None' (singleton-comparison)
+- **main.py:10:0**: R0904: Too many public methods (25/20) (too-many-public-methods)
+- **main.py:493:0**: C0116: Missing function or method docstring (missing-function-docstring)
+- **main.py:493:0**: C0103: Function name "readData" doesn't conform to snake_case naming style (invalid-name)
+- **main.py:514:0**: C0116: Missing function or method docstring (missing-function-docstring)
+- **main.py:516:4**: W0612: Unused variable 'app' (unused-variable)
+
 
 -----------------------------------
 Your code has been rated at 7.99/10

@@ -1,3 +1,6 @@
+"""
+This module implements a GUI application for interacting with tabular data.
+"""
 import tkinter as tk
 from tkinter import ttk
 import pandas as pd
@@ -29,11 +32,11 @@ class TableGUI:
 
         self.integer_columns = ["Linie", "Didok-Nummer", "IPID", "FID", "BPUIC"]
         self.float_columns = ["KM", "Perronkantenlänge", "GO_IPID"]
-        self.string_columns = ["Abkuerzung Bahnhof", "Haltestellen Name", "Perrontyp", "Perron Nummer",
-                               "Kundengleisnummer", "Perronkantenhöhe", "Bemerkung Höhe", "Hilfstritt"
-                                                                                          "Höhenverlauf", "Material",
-                               "Bemerkung Material", "Kantenart",
-                               "Bemerkung Kantenkrone", "Auftritt", "lod", "start_lon", "start_lat",
+        self.string_columns = ["Abkuerzung Bahnhof", "Haltestellen Name", "Perrontyp",
+                               "Perron Nummer", "Kundengleisnummer", "Perronkantenhöhe",
+                               "Bemerkung Höhe", "Hilfstritt", "Höhenverlauf", "Material",
+                               "Bemerkung Material", "Kantenart", "Bemerkung Kantenkrone",
+                               "Auftritt", "lod", "start_lon", "start_lat",
                                "end_lon", "end_lat"]
 
         # Frame for table
@@ -112,7 +115,6 @@ class TableGUI:
             self.input_entries_frame = ttk.Frame(canvas)
         elif frame == self.coordinate_frame:
             self.coordinate_entries_frame = ttk.Frame(canvas)
-        
         entries_frame = ttk.Frame(canvas)
         yscrollbar = ttk.Scrollbar(frame, orient="vertical", command=canvas.yview)
         yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
@@ -445,7 +447,7 @@ class TableGUI:
 
         """
         line_df = df
-        if (word != None):
+        if word is not None:
             line_df = df[df[columnName] == word]
 
         return line_df
@@ -459,7 +461,7 @@ class TableGUI:
 
         """
         line_df = df
-        if (word != None):
+        if word is not None:
             line_df = df[df[columnName] == int(word)]
 
         return line_df
@@ -473,7 +475,7 @@ class TableGUI:
 
         """
         line_df = df
-        if (word != None):
+        if word is not None:
             line_df = df[df[columnName] == float(word)]
 
         return line_df
