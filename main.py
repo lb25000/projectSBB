@@ -20,7 +20,7 @@ class TableGUI:
         self.master.geometry("800x400")  # Größe der GUI anpassen
 
         # DataFrame einlesen
-        self.df = readData()
+        self.df = read_data()
 
         # copy original df, to have a backup
         self.original_df = self.df.copy()
@@ -267,6 +267,9 @@ class TableGUI:
         self.coordinate_frame.pack_forget()
 
     def show_search_fields(self):
+        """
+        Show the search fields and configure the 'Go' button to execute search.
+        """
         self.go_button.configure(command=self.execute_search)
         self.input_frame.pack_forget()
         self.coordinate_frame.pack_forget()
@@ -274,6 +277,9 @@ class TableGUI:
         self.search_frame.pack(side="top", fill="x", padx=10, pady=10)
 
     def show_input_fields(self):
+        """
+        Show the input fields and configure the 'Go' button to execute input.
+        """
         self.go_button.configure(command=self.execute_input)
         self.search_frame.pack_forget()
         self.coordinate_frame.pack_forget()
@@ -281,6 +287,9 @@ class TableGUI:
         self.input_frame.pack(side="top", fill="x", padx=10, pady=10)
 
     def show_coordinate_search(self):
+        """
+        Show the coordinate search fields and configure the 'Go' button to filter and plot coordinates.
+        """
         self.go_button.configure(command=self.filter_and_plot_coordinates)
         self.input_frame.pack_forget()
         self.search_frame.pack_forget()
@@ -298,13 +307,13 @@ class TableGUI:
             word = entry.get()
             if column in self.string_columns:
                 if len(word) != 0:
-                    search_df = self.filter_String(self.df, word, column)
+                    search_df = self.filter_string(self.df, word, column)
             elif column in self.integer_columns:
                 if len(word) != 0:
-                    search_df = self.filter_Integer(self.df, word, column)
+                    search_df = self.filter_integer(self.df, word, column)
             elif column in self.float_columns:
                 if len(word) != 0:
-                    search_df = self.filter_Float(self.df, word, column)
+                    search_df = self.filter_float(self.df, word, column)
 
         self.df = search_df
         self.update_table()
@@ -441,44 +450,44 @@ class TableGUI:
         self.update_table()
 
     @staticmethod
-    def filter_String(df, word=None, columnName=None):
+    def filter_string(df, word=None, column_name=None):
         """
         :param word: wort nachdem gesucht und verglichen wird
-        :param columnName: Der Column-Name in der gefiltert werden soll
+        :param column_name: Der Column-Name in der gefiltert werden soll
         :return: gefiltertes datafram
 
         """
         line_df = df
         if word is not None:
-            line_df = df[df[columnName] == word]
+            line_df = df[df[column_name] == word]
 
         return line_df
 
     @staticmethod
-    def filter_Integer(df, word=None, columnName=None):
+    def filter_integer(df, word=None, column_name=None):
         """
         :param word: wort nachdem gesucht und verglichen wird
-        :param columnName: Der Column-Name in der gefiltert werden soll
+        :param column_name: Der Column-Name in der gefiltert werden soll
         :return: gefiltertes datafram
 
         """
         line_df = df
         if word is not None:
-            line_df = df[df[columnName] == int(word)]
+            line_df = df[df[column_name] == int(word)]
 
         return line_df
 
     @staticmethod
-    def filter_Float(df, word=None, columnName=None):
+    def filter_float(df, word=None, column_name=None):
         """
         :param word: wort nachdem gesucht und verglichen wird
-        :param columnName: Der Column-Name in der gefiltert werden soll
+        :param column_name: Der Column-Name in der gefiltert werden soll
         :return: gefiltertes datafram
 
         """
         line_df = df
         if word is not None:
-            line_df = df[df[columnName] == float(word)]
+            line_df = df[df[column_name] == float(word)]
 
         return line_df
 
@@ -494,24 +503,20 @@ class TableGUI:
 
 
 
-def readData():
+def read_data():
     # silent warnings
     pd.set_option('future.no_silent_downcasting', True)
     # Read data from CSV File
     df_perronkante = pd.read_csv('./Daten/perronkante.csv', sep=';')
-
     # Splitting the '1_koord' and '2_koord' columns into separate columns
     start_coords = df_perronkante['1_koord'].str.split(',', expand=True)
     end_coords = df_perronkante['2_koord'].str.split(',', expand=True)
-
     # Renaming columns
     start_coords.columns = ['start_lat', 'start_long']
     end_coords.columns = ['end_lat', 'end_long']
-
     # Concatenating start and end coordinates with original DataFrame
     df_perronkante = pd.concat([df_perronkante, start_coords, end_coords], axis=1)
     df_perronkante = df_perronkante.drop(['1_koord', '2_koord'], axis='columns')
-
     return df_perronkante
 
 
