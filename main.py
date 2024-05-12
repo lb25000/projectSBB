@@ -8,6 +8,9 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 class TableGUI:
+    """
+    User interaction is realised in this class as TableGUI.
+    """
     def __init__(self, master):
         self.master = master
         self.master.title("Table GUI")
@@ -75,6 +78,9 @@ class TableGUI:
 
 
     def create_table(self):
+        """
+        Creates a table in the GUI.
+        """
         self.table = ttk.Treeview(self.table_frame, style="Treeview")
         self.table["columns"] = list(self.df.columns)
         self.table["show"] = "headings"
@@ -84,6 +90,9 @@ class TableGUI:
         self.table.pack(side="left", fill="both", expand=True)
 
     def create_scrollbars_in_table(self):
+        """
+        Creates scrollbars in the GUI.
+        """
         yscrollbar = ttk.Scrollbar(self.table_frame, orient="vertical", command=self.table.yview)
         yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
         xscrollbar = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.table.xview)
@@ -91,6 +100,9 @@ class TableGUI:
         self.table.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
 
     def create_scrollable_canvas(self, frame):
+        """
+        Creates scrollable canvas  in the GUI.
+        """
         canvas = tk.Canvas(frame)
         canvas.pack(side="left", fill="both", expand=True)
 
@@ -115,6 +127,9 @@ class TableGUI:
         return canvas
 
     def create_buttons(self):
+        """
+        Create the relevant buttons for the GUI.
+        """
         button_frame = ttk.Frame(self.master)
         button_frame.pack()
 
@@ -153,6 +168,9 @@ class TableGUI:
             self.table.insert("", "end", values=list(row))
 
     def calculate_column_stats(self, column_name):
+        """
+        Calculates statistics in the relevant integer or float column.
+        """
         column = self.df[column_name]
         if column_name in self.integer_columns or column_name in self.float_columns:
             return {
@@ -163,6 +181,9 @@ class TableGUI:
         return None
 
     def show_column_stats(self, column_name):
+        """
+        Shows statistics of integer or float column. 
+        """
         stats = self.calculate_column_stats(column_name)
         if stats:
             message = f"Min: {stats['min']}, Max: {stats['max']}, Mean: {stats['mean']}"
@@ -218,6 +239,9 @@ class TableGUI:
         self.coordinate_canvas.config(scrollregion=self.coordinate_canvas.bbox("all"))
 
     def pack_search_and_input(self):
+        """
+        Pack the search, input and coordinate frame.
+        """
         self.search_frame.pack_forget()
         self.input_frame.pack_forget()
         self.coordinate_frame.pack_forget()
