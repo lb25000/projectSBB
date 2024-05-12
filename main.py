@@ -197,6 +197,22 @@ class TableGUI:
         self.input_entries_frame.update_idletasks()  # Für die Berechnung der Größe des Canvas-Widgets
         self.input_canvas.config(scrollregion=self.input_canvas.bbox("all"))
 
+    def create_coordinate_search_fields(self):
+        """
+        Creates search fields for start and end coordinates.
+        """
+        coordinate_columns = ["start_lat", "start_long", "end_lat", "end_long"]
+        for i, col in enumerate(coordinate_columns):
+            search_label = ttk.Label(self.coordinate_entries_frame, text=f"Search {col}:")
+            search_label.pack(side="left", padx=(10, 5), pady=5)
+            search_entry = ttk.Entry(self.coordinate_entries_frame)
+            search_entry.pack(side="left", padx=(0, 10), pady=5)
+            self.search_entries[col] = search_entry
+
+        self.coordinate_canvas.create_window((0, 0), window=self.coordinate_entries_frame, anchor="nw")
+        self.coordinate_entries_frame.update_idletasks()
+        self.coordinate_canvas.config(scrollregion=self.coordinate_canvas.bbox("all"))
+
     def pack_search_and_input(self):
         self.search_frame.pack_forget()
         self.input_frame.pack_forget()
@@ -225,6 +241,20 @@ class TableGUI:
         self.create_search_fields()
         self.search_frame.pack(side="top", fill="x", padx=10, pady=10)
 
+    def show_input_fields(self):
+        self.go_button.configure(command=self.execute_input)
+        self.search_frame.pack_forget()
+        self.coordinate_frame.pack_forget()
+        self.create_input_fields()
+        self.input_frame.pack(side="top", fill="x", padx=10, pady=10)
+
+    def show_coordinate_search(self):
+        self.go_button.configure(command=self.filter_and_plot_coordinates)
+        self.input_frame.pack_forget()
+        self.search_frame.pack_forget()
+        self.create_coordinate_search_fields()
+        self.coordinate_frame.pack(side="top", fill="x", padx=10, pady=10)
+
     def execute_search(self):
         """
            Executes the search functionality based on the input provided in the search fields.
@@ -246,29 +276,6 @@ class TableGUI:
 
         self.df = search_df
         self.update_table()
-
-    def show_coordinate_search(self):
-        self.go_button.configure(command=self.filter_and_plot_coordinates)
-        self.input_frame.pack_forget()
-        self.search_frame.pack_forget()
-        self.create_coordinate_search_fields()
-        self.coordinate_frame.pack(side="top", fill="x", padx=10, pady=10)
-
-    def create_coordinate_search_fields(self):
-        """
-        Creates search fields for start and end coordinates.
-        """
-        coordinate_columns = ["start_lat", "start_long", "end_lat", "end_long"]
-        for i, col in enumerate(coordinate_columns):
-            search_label = ttk.Label(self.coordinate_entries_frame, text=f"Search {col}:")
-            search_label.pack(side="left", padx=(10, 5), pady=5)
-            search_entry = ttk.Entry(self.coordinate_entries_frame)
-            search_entry.pack(side="left", padx=(0, 10), pady=5)
-            self.search_entries[col] = search_entry
-
-        self.coordinate_canvas.create_window((0, 0), window=self.coordinate_entries_frame, anchor="nw")
-        self.coordinate_entries_frame.update_idletasks()
-        self.coordinate_canvas.config(scrollregion=self.coordinate_canvas.bbox("all"))
 
     def filter_and_plot_coordinates(self):
         """
@@ -354,8 +361,6 @@ class TableGUI:
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-
-
     def execute_input(self):
         """
         Executes the input functionality based on the data provided in the input fields. Iterates
@@ -398,12 +403,6 @@ class TableGUI:
         self.undo_df = self.df
         self.update_table()
 
-    def show_input_fields(self):
-        self.go_button.configure(command=self.execute_input)
-        self.search_frame.pack_forget()
-        self.coordinate_frame.pack_forget()
-        self.create_input_fields()
-        self.input_frame.pack(side="top", fill="x", padx=10, pady=10)
 
     def undo_filter(self):
         self.df = self.undo_df
@@ -460,8 +459,6 @@ class TableGUI:
         feedback_window.title("Feedback")
         feedback_label = ttk.Label(feedback_window, text=message)
         feedback_label.pack(padx=10, pady=10)
-
-
 
 
 
