@@ -65,45 +65,21 @@ class TableGUI:
 
         self.table.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
 
-        # Suchfelder Frame mit Canvas für Scrollbar
+        self.coordinate_entries_frame = None
+
         self.search_frame = ttk.Frame(master)
-
-        self.search_canvas = tk.Canvas(self.search_frame)
-        self.search_canvas.pack(side="left", fill="both", expand=True)
-
-        self.search_entries_frame = ttk.Frame(self.search_canvas)
-        yscrollbar = ttk.Scrollbar(self.search_frame, orient="vertical", command=self.search_canvas.yview)
-        yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
-        xscrollbar = ttk.Scrollbar(self.search_frame, orient="horizontal", command=self.search_canvas.xview)
-        xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
-        self.search_canvas.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
-
-        self.search_entries = {}  # Initialisierung des search_entries-Attributs
-
-        # Eingabefelder Frame mit Canvas für Scrollbar
         self.input_frame = ttk.Frame(master)
-
-        self.input_canvas = tk.Canvas(self.input_frame)
-        self.input_canvas.pack(side="left", fill="both", expand=True)
-
-        self.input_entries_frame = ttk.Frame(self.input_canvas)
-        yscrollbar = ttk.Scrollbar(self.input_frame, orient="vertical", command=self.input_canvas.yview)
-        yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
-        xscrollbar = ttk.Scrollbar(self.input_frame, orient="horizontal", command=self.input_canvas.xview)
-        xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
-        self.input_canvas.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
-
-        self.input_entries = {}  # Initialisierung des input_entries-Attributs
-
-        #coordinates
-
         self.coordinate_frame = ttk.Frame(master)
-        self.coordinate_canvas = tk.Canvas(self.coordinate_frame)
-        self.coordinate_canvas.pack(side="left", fill="both", expand=True)
-        self.coordinate_entries_frame = ttk.Frame(self.coordinate_canvas)
-        xscrollbar = ttk.Scrollbar(self.coordinate_frame, orient="horizontal", command=self.coordinate_canvas.xview)
-        xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
-        self.coordinate_canvas.configure(xscrollcommand=xscrollbar.set)
+
+        # Canvas
+        self.search_canvas = self.create_scrollable_canvas(self.search_frame) # Suchfelder Frame mit Canvas für Scrollbar
+        self.input_canvas = self.create_scrollable_canvas(self.input_frame) # Eingabefelder Frame mit Canvas für Scrollbar
+        self.coordinate_canvas = self.create_scrollable_canvas(self.coordinate_frame) # Koordinatenfelder Frame mit Canvas für Scrollbar
+
+        # Entries
+        self.search_entries = {}
+        self.input_entries = {}
+        self.coordinate_entries = {}
 
         # Buttons
         self.go_button = None
@@ -130,6 +106,28 @@ class TableGUI:
         for col in self.df.columns:
             self.table.heading(col, text=col, command=lambda c=col: self.show_column_stats(c))
             self.table.bind("<Motion>", change_cursor, "+")
+
+    def create_scrollable_canvas(self, frame):
+        canvas = tk.Canvas(frame)
+        canvas.pack(side="left", fill="both", expand=True)
+
+        if frame == self.search_frame:
+            self.search_entries_frame = ttk.Frame(canvas)
+        elif frame == self.coordinate_frame:
+            self.coordinate_entries_frame = ttk.Frame(canvas)
+        
+        entries_frame = ttk.Frame(canvas)
+        yscrollbar = ttk.Scrollbar(frame, orient="vertical", command=canvas.yview)
+        yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
+        xscrollbar = ttk.Scrollbar(frame, orient="horizontal", command=canvas.xview)
+        xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
+        canvas.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
+
+        canvas.create_window((0, 0), window=entries_frame, anchor="nw")
+        entries_frame.update_idletasks()
+        canvas.config(scrollregion=canvas.bbox("all"))
+
+        return canvas
 
     def create_buttons(self):
         button_frame = ttk.Frame(self.master)
@@ -262,13 +260,12 @@ class TableGUI:
         """
         Creates search fields for start and end coordinates.
         """
-        num_cols = 4
         coordinate_columns = ["start_lat", "start_long", "end_lat", "end_long"]
         for i, col in enumerate(coordinate_columns):
             search_label = ttk.Label(self.coordinate_entries_frame, text=f"Search {col}:")
-            search_label.grid(row=i // num_cols, column=i % num_cols * 2, sticky="e", padx=(10, 5), pady=5)
+            search_label.pack(side="left", padx=(10, 5), pady=5)
             search_entry = ttk.Entry(self.coordinate_entries_frame)
-            search_entry.grid(row=i // num_cols, column=i % num_cols * 2 + 1, sticky="we", padx=(0, 10), pady=5)
+            search_entry.pack(side="left", padx=(0, 10), pady=5)
             self.search_entries[col] = search_entry
 
         self.coordinate_canvas.create_window((0, 0), window=self.coordinate_entries_frame, anchor="nw")
