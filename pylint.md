@@ -1,9 +1,9 @@
 ## Pylint Status am 11. May 2024
-```
+***1***
 ***- main.py:32:0: C0301: Line too long (103/100) (line-too-long)***
 ***- main.py:33:0: C0301: Line too long (102/100) (line-too-long)***
 ***- main.py:34:0: C0301: Line too long (117/100) (line-too-long)***
-```
+
 ````python
 self.string_columns = ["Abkuerzung Bahnhof", "Haltestellen Name", "Perrontyp", "Perron Nummer",
                                "Kundengleisnummer", "Perronkantenhöhe", "Bemerkung Höhe", "Hilfstritt"
@@ -31,6 +31,7 @@ self.string_columns = ["Abkuerzung Bahnhof", "Haltestellen Name", "Perrontyp",
 - **main.py:66:0**: C0301: Line too long (136/100) (line-too-long)
 - **main.py:89:0**: C0301: Line too long (101/100) (line-too-long)
 
+***2***
 ***- main.py:115:0: C0303: Trailing whitespace (trailing-whitespace)***
 
 ````python
@@ -57,6 +58,7 @@ changed to
 - **main.py:416:0**: C0301: Line too long (113/100) (line-too-long)
 - **main.py:421:0**: C0301: Line too long (114/100) (line-too-long)
 
+***3***
 ***- main.py:448:0: C0325: Unnecessary parens after 'if' keyword (superfluous-parens)***
 ***- main.py:462:0: C0325: Unnecessary parens after 'if' keyword (superfluous-parens)***
 ***- main.py:476:0: C0325: Unnecessary parens after 'if' keyword (superfluous-parens)***
@@ -69,14 +71,13 @@ changed to
 if word is not None:
 ```
 
-
+***4***
 ***- main.py:521:0: C0304: Final newline missing (missing-final-newline***
 ```
 added new line
 ```
-
-
-***- **main.py:1:0**: C0114: Missing module docstring (missing-module-docstring)***
+***5***
+***- main.py:1:0: C0114: Missing module docstring (missing-module-docstring)***
 inserted
 ```python
 """
@@ -88,17 +89,39 @@ This module implements a GUI application for interacting with tabular data.
 - **main.py:230:12**: W0612: Unused variable 'i' (unused-variable)
 - **main.py:249:4**: C0116: Missing function or method docstring (missing-function-docstring)
 - **main.py:250:8**: W0612: Unused variable 'change_cursor' (unused-variable)
-- **main.py:265:4**: C0116: Missing function or method docstring (missing-function-docstring)
+
+***6***
+***- main.py:265:4: C0116: Missing function or method docstring (missing-function-docstring)***
+````python
+    def show_search_fields(self):
+        self.go_button.configure(command=self.execute_search)
+````
+changed to
+```python
+    def show_search_fields(self):
+        """
+        Show the search fields and configure the 'Go' button to execute search.
+        """
+```
 - **main.py:272:4**: C0116: Missing function or method docstring (missing-function-docstring)
 - **main.py:279:4**: C0116: Missing function or method docstring (missing-function-docstring)
 - **main.py:335:4**: R0913: Too many arguments (6/5) (too-many-arguments)
 - **main.py:335:4**: R0914: Too many local variables (16/15) (too-many-locals)
 - **main.py:392:4**: R0912: Too many branches (13/12) (too-many-branches)
 - **main.py:435:4**: C0116: Missing function or method docstring (missing-function-docstring)
-- **main.py:440:4**: C0103: Method name "filter_String" doesn't conform to snake_case naming style (invalid-name)
-- **main.py:440:37**: C0103: Argument name "columnName" doesn't conform to snake_case naming style (invalid-name)
-- 
 
+***7***
+***- main.py:440:4: C0103: Method name "filter_String" doesn't conform to snake_case naming style (invalid-name)***
+````python
+    def filter_String(df, word=None, columnName=None):
+````
+changed to
+```python
+    def filter_string(df, word=None, columnName=None):
+```
+- **main.py:440:37**: C0103: Argument name "columnName" doesn't conform to snake_case naming style (invalid-name)
+
+***8***
 ***- main.py:448:12: C0121: Comparison 'word != None' should be 'word is not None' (singleton-comparison)***
 ```python
 if (word != None):
@@ -108,14 +131,32 @@ if word is not None:
 ````
 
 - **main.py:454:4**: C0103: Method name "filter_Integer" doesn't conform to snake_case naming style (invalid-name)
-- **main.py:454:38**: C0103: Argument name "columnName" doesn't conform to snake_case naming style (invalid-name)
+
+***9***
+- ***- main.py:454:38: C0103: Argument name "columnName" doesn't conform to snake_case naming style (invalid-name)***
+````python
+columnName
+````
+changed to
+````python
+column_name
+````
 - **main.py:462:12**: C0121: Comparison 'word != None' should be 'word is not None' (singleton-comparison)
 - **main.py:468:4**: C0103: Method name "filter_Float" doesn't conform to snake_case naming style (invalid-name)
 - **main.py:468:36**: C0103: Argument name "columnName" doesn't conform to snake_case naming style (invalid-name)
 - **main.py:476:12**: C0121: Comparison 'word != None' should be 'word is not None' (singleton-comparison)
 - **main.py:10:0**: R0904: Too many public methods (25/20) (too-many-public-methods)
 - **main.py:493:0**: C0116: Missing function or method docstring (missing-function-docstring)
-- **main.py:493:0**: C0103: Function name "readData" doesn't conform to snake_case naming style (invalid-name)
+
+***10***
+***-main.py:493:0: C0103: Function name "readData" doesn't conform to snake_case naming style (invalid-name)***
+````python
+def readData():
+````
+changed to
+```python
+def read_Data():
+```
 - **main.py:514:0**: C0116: Missing function or method docstring (missing-function-docstring)
 - **main.py:516:4**: W0612: Unused variable 'app' (unused-variable)
 
