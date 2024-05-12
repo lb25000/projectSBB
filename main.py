@@ -65,8 +65,6 @@ class TableGUI:
 
         self.table.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
 
-        self.coordinate_entries_frame = None
-
         self.search_frame = ttk.Frame(master)
         self.input_frame = ttk.Frame(master)
         self.coordinate_frame = ttk.Frame(master)
@@ -82,7 +80,6 @@ class TableGUI:
         self.coordinate_entries = {}
 
         # Buttons
-        self.go_button = None
         self.create_buttons()
 
         self.pack_search_and_input()
@@ -95,6 +92,8 @@ class TableGUI:
 
         if frame == self.search_frame:
             self.search_entries_frame = ttk.Frame(canvas)
+        elif frame == self.input_frame:
+            self.input_entries_frame = ttk.Frame(canvas)
         elif frame == self.coordinate_frame:
             self.coordinate_entries_frame = ttk.Frame(canvas)
         
