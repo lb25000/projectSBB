@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
+import operator
 
 class TableGUI:
     """
@@ -305,15 +305,25 @@ class TableGUI:
         search_df = self.original_df.copy()  # Kopie der ursprünglichen Tabelle erstellen
         for column, entry in self.search_entries.items():
             word = entry.get()
-            if column in self.string_columns:
-                if len(word) != 0:
-                    search_df = self.filter_string(self.df, word, column)
-            elif column in self.integer_columns:
-                if len(word) != 0:
-                    search_df = self.filter_integer(self.df, word, column)
-            elif column in self.float_columns:
-                if len(word) != 0:
-                    search_df = self.filter_float(self.df, word, column)
+            #print(word[0:1])
+            if(word[0:1].isdigit()== True):
+                search_df = self.filter_Direct(self.df,word,column)
+            else:
+                if(word[1:2] != '='):
+                    if(word[0:1].isalpha() == False):
+                        wordop = word[:1]
+                        word = word[1:]
+                    else:
+                        word = word
+                else:
+                    wordop = word[:2]
+                    word = word[2:]
+                if column in self.string_columns:
+                    if len(word)!=0: 
+                        search_df = self.filter_string(self.df, word, column)
+                else:
+                    if len(word)!=0: 
+                        search_df = self.filter_General(self.df, firstOperator=wordop, firstNumber=word,columnName=column)      
 
         self.df = search_df
         self.update_table()
@@ -490,6 +500,60 @@ class TableGUI:
             line_df = df[df[column_name] == float(word)]
 
         return line_df
+    
+    @staticmethod
+    def filter_Direct(df, word=None, columnName = None):
+        """
+        :param word: wort nachdem gesucht und verglichen wird
+        :param columnName: Der Column-Name in der gefiltert werden soll
+        :return: gefiltertes datafram
+
+        """
+        if(word.isdigit()):
+            word = int(word)
+        else:
+            word = float(word)
+        line_df = df
+        if(word != None):
+            line_df = df[df[columnName] == word]
+
+        return line_df
+
+    @staticmethod
+    def filter_General(df, firstOperator = None, firstNumber = None, secondOperator = None, secondNumber = None, columnName = None):
+        """
+        
+        :param firstOperator: erster assignment operator nach dem gefiltert wird. Z.B >=
+        :param firstNumber: erste grösse nachdem gefiltert wird, z.b. 200
+        :param secondOperator: zweiter assignment operator nach dem gefiltert wird. Z.B <
+        :param secondNumber: zweite grösse nachdem gefiltert wird, z.b. 400
+        :param columnName: Der Column-Name in der gefiltert werden soll
+        :return: gefiltertes dataframe
+        """
+
+        ops = {
+        "<": operator.lt,
+        "<=": operator.le,
+        "==": operator.eq,
+        '!=': operator.ne,
+        ">=": operator.ge,
+        ">": operator.gt
+        } 
+        if(firstNumber.isdigit()):
+            firstNumber = int(firstNumber)
+        else:
+            firstNumber = float(firstNumber)
+        #print(firstOperator)
+        #print(firstNumber)
+        line_df = df
+        if(firstOperator != None and secondNumber == None):
+            line_df = line_df[ops[firstOperator](line_df[columnName],firstNumber)]
+           
+            
+        if(firstOperator != None and secondNumber != None):
+            line_df = line_df[(ops[firstOperator](line_df[columnName],firstNumber)) & (ops[secondOperator](line_df[columnName],secondNumber))]
+            
+        return line_df 
 
     def show_feedback_window(self, message):
         """
