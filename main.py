@@ -45,25 +45,13 @@ class TableGUI:
         style.map("Treeview", background=[('selected', '#add8e6')])
 
         # Tabelle erstellen
-        self.table = ttk.Treeview(self.table_frame, style="Treeview")
-        self.table["columns"] = list(self.df.columns)
-        self.table["show"] = "headings"
-        for col in self.df.columns:
-            self.table.heading(col, text=col)
-            self.table.column(col, width=100, minwidth=50, anchor="center")  # Spaltenbreite anpassen
-        self.table.pack(side="left", fill="both", expand=True)
+        self.create_table()
 
         # Zeilen in der Tabelle einfügen
         self.insert_table_rows()
 
         # Scrollbars für die Tabelle hinzufügen
-        yscrollbar = ttk.Scrollbar(self.table_frame, orient="vertical", command=self.table.yview)
-        yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
-
-        xscrollbar = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.table.xview)
-        xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
-
-        self.table.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
+        self.create_scrollbars_in_table()
 
         self.search_frame = ttk.Frame(master)
         self.input_frame = ttk.Frame(master)
@@ -85,6 +73,22 @@ class TableGUI:
         self.pack_search_and_input()
         self.bind_column_hover()
 
+
+    def create_table(self):
+        self.table = ttk.Treeview(self.table_frame, style="Treeview")
+        self.table["columns"] = list(self.df.columns)
+        self.table["show"] = "headings"
+        for col in self.df.columns:
+            self.table.heading(col, text=col)
+            self.table.column(col, width=100, minwidth=50, anchor="center")  # Spaltenbreite anpassen
+        self.table.pack(side="left", fill="both", expand=True)
+
+    def create_scrollbars_in_table(self):
+        yscrollbar = ttk.Scrollbar(self.table_frame, orient="vertical", command=self.table.yview)
+        yscrollbar.place(relx=1, rely=0, relheight=1, anchor='ne')
+        xscrollbar = ttk.Scrollbar(self.table_frame, orient="horizontal", command=self.table.xview)
+        xscrollbar.place(relx=0, rely=1, relwidth=1, anchor='sw')
+        self.table.configure(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
 
     def create_scrollable_canvas(self, frame):
         canvas = tk.Canvas(frame)
