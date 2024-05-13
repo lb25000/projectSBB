@@ -3,12 +3,13 @@ This module implements a GUI application for interacting with tabular data.
 """
 import tkinter as tk
 from tkinter import ttk
+import operator
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import operator
+
 
 class TableGUI:
     """
@@ -21,15 +22,11 @@ class TableGUI:
 
         # DataFrame einlesen
         self.df = read_data()
-
         # copy original df, to have a backup
         self.original_df = self.df.copy()
-
         # copy original df to undo filters
         self.undo_df = self.original_df.copy()
-
         # definition of numeric and string columns
-
         self.integer_columns = ["Linie", "Didok-Nummer", "IPID", "FID", "BPUIC"]
         self.float_columns = ["KM", "Perronkantenlänge", "GO_IPID"]
         self.string_columns = ["Abkuerzung Bahnhof", "Haltestellen Name", "Perrontyp",
@@ -45,34 +42,29 @@ class TableGUI:
 
         # Style für die Tabelle anpassen, um Linien zwischen den Zellen anzuzeigen
         style = ttk.Style()
-        style.configure("Treeview", font=('Helvetica', 10), rowheight=25, foreground="black", background="white")
-        style.configure("Treeview.Heading", font=('Helvetica', 10), foreground="black", background="#eaeaea",
-                        relief="raised")
+        style.configure("Treeview", font=('Helvetica', 10), rowheight=25,
+                        foreground="black", background="white")
+        style.configure("Treeview.Heading", font=('Helvetica', 10), foreground="black",
+                        background="#eaeaea", relief="raised")
         style.map("Treeview", background=[('selected', '#add8e6')])
 
         # Tabelle erstellen
         self.create_table()
-
         # Zeilen in der Tabelle einfügen
-        self.insert_table_rows()
-
+        self._insert_table_rows()
         # Scrollbars für die Tabelle hinzufügen
         self.create_scrollbars_in_table()
-
         self.search_frame = ttk.Frame(master)
         self.input_frame = ttk.Frame(master)
         self.coordinate_frame = ttk.Frame(master)
-
         # Canvas
-        self.search_canvas = self.create_scrollable_canvas(self.search_frame) # Suchfelder Frame mit Canvas für Scrollbar
-        self.input_canvas = self.create_scrollable_canvas(self.input_frame) # Eingabefelder Frame mit Canvas für Scrollbar
-        self.coordinate_canvas = self.create_scrollable_canvas(self.coordinate_frame) # Koordinatenfelder Frame mit Canvas für Scrollbar
-
+        self.search_canvas = self.create_scrollable_canvas(self.search_frame)
+        self.input_canvas = self.create_scrollable_canvas(self.input_frame)
+        self.coordinate_canvas = self.create_scrollable_canvas(self.coordinate_frame)
         # Entries
         self.search_entries = {}
         self.input_entries = {}
         self.coordinate_entries = {}
-
         # Buttons
         self.create_buttons()
 
@@ -93,7 +85,7 @@ class TableGUI:
                     widget.config(cursor="")
 
         for col in self.df.columns:
-            self.table.heading(col, text=col, command=lambda c=col: self.show_column_stats(c))
+            self.table.heading(col, text=col, command=lambda c=col: self._show_column_stats(c))
             self.table.bind("<Motion>", change_cursor, "+")
 
 
@@ -107,7 +99,7 @@ class TableGUI:
         self.table["show"] = "headings"
         for col in self.df.columns:
             self.table.heading(col, text=col)
-            self.table.column(col, width=100, minwidth=50, anchor="center")  # Spaltenbreite anpassen
+            self.table.column(col, width=100, minwidth=50, anchor="center")
         self.table.pack(side="left", fill="both", expand=True)
 
     def create_scrollbars_in_table(self):
@@ -168,26 +160,27 @@ class TableGUI:
                 button = ttk.Button(button_frame, text=text, command=command)
                 button.pack(side="left", padx=5)
 
-    def update_table(self):
+    def _update_table(self):
         """
-        Updates the table by removing all existing rows and inserting rows from the updated DataFrame.
+        Updates the table by removing all existing rows and inserting
+         rows from the updated DataFrame.
         """
         for row in self.table.get_children():
             self.table.delete(row)
-        self.insert_table_rows()
+        self._insert_table_rows()
 
-    def insert_table_rows(self):
+    def _insert_table_rows(self):
         """
         Inserts rows (data) into the table based on the DataFrame.
         """
         for col in self.df.columns:
-            self.table.heading(col, text=col, command=lambda c=col: self.show_column_stats(c))  # bind command to header
+            self.table.heading(col, text=col, command=lambda c=col: self._show_column_stats(c))
 
         for i, row in self.df.iterrows():
             row = row.fillna('')
             self.table.insert("", "end", values=list(row))
 
-    def calculate_column_stats(self, column_name):
+    def _calculate_column_stats(self, column_name):
         """
         Calculates statistics in the relevant integer or float column.
         """
@@ -200,32 +193,34 @@ class TableGUI:
             }
         return None
 
-    def show_column_stats(self, column_name):
+    def _show_column_stats(self, column_name):
         """
         Shows statistics of integer or float column. 
         """
-        stats = self.calculate_column_stats(column_name)
+        stats = self._calculate_column_stats(column_name)
         if stats:
             message = f"Min: {stats['min']}, Max: {stats['max']}, Mean: {stats['mean']}"
             self.show_feedback_window(message)
 
-    def create_search_fields(self):
+    def _create_search_fields(self):
         """
         Creates search fields for each column in the DataFrame.
         """
         num_cols = 4
         for i, col in enumerate(self.df.columns):
             search_label = ttk.Label(self.search_entries_frame, text=f"Search {col}:")
-            search_label.grid(row=i // num_cols, column=i % num_cols * 2, sticky="e", padx=(10, 5), pady=5)
+            search_label.grid(row=i // num_cols, column=i % num_cols * 2, sticky="e",
+                              padx=(10, 5), pady=5)
             search_entry = ttk.Entry(self.search_entries_frame)
-            search_entry.grid(row=i // num_cols, column=i % num_cols * 2 + 1, sticky="we", padx=(0, 10), pady=5)
+            search_entry.grid(row=i // num_cols, column=i % num_cols * 2 + 1,
+                              sticky="we", padx=(0, 10), pady=5)
             self.search_entries[col] = search_entry
 
         self.search_canvas.create_window((0, 0), window=self.search_entries_frame, anchor="nw")
         self.search_entries_frame.update_idletasks()
         self.search_canvas.config(scrollregion=self.search_canvas.bbox("all"))
 
-    def create_input_fields(self):
+    def _create_input_fields(self):
         """
         Creates input fields for each column in the DataFrame.
         """
@@ -233,16 +228,18 @@ class TableGUI:
         for i, col in enumerate(self.df.columns):
             if col != "ID":  # Beispiel: "ID" ist eine Spalte, die nicht bearbeitet werden soll
                 input_label = ttk.Label(self.input_entries_frame, text=f"Enter {col}:")
-                input_label.grid(row=i // num_cols, column=i % num_cols * 2, sticky="e", padx=(10, 5), pady=5)
+                input_label.grid(row=i // num_cols, column=i % num_cols * 2, sticky="e",
+                                 padx=(10, 5), pady=5)
                 input_entry = ttk.Entry(self.input_entries_frame)
-                input_entry.grid(row=i // num_cols, column=i % num_cols * 2 + 1, sticky="we", padx=(0, 10), pady=5)
+                input_entry.grid(row=i // num_cols, column=i % num_cols * 2 + 1,
+                                 sticky="we", padx=(0, 10), pady=5)
                 self.input_entries[col] = input_entry
 
         self.input_canvas.create_window((0, 0), window=self.input_entries_frame, anchor="nw")
         self.input_entries_frame.update_idletasks()  # Für die Berechnung der Größe des Canvas-Widgets
         self.input_canvas.config(scrollregion=self.input_canvas.bbox("all"))
 
-    def create_coordinate_search_fields(self):
+    def _create_coordinate_search_fields(self):
         """
         Creates search fields for start and end coordinates.
         """
@@ -273,7 +270,7 @@ class TableGUI:
         self.go_button.configure(command=self.execute_search)
         self.input_frame.pack_forget()
         self.coordinate_frame.pack_forget()
-        self.create_search_fields()
+        self._create_search_fields()
         self.search_frame.pack(side="top", fill="x", padx=10, pady=10)
 
     def show_input_fields(self):
@@ -283,7 +280,7 @@ class TableGUI:
         self.go_button.configure(command=self.execute_input)
         self.search_frame.pack_forget()
         self.coordinate_frame.pack_forget()
-        self.create_input_fields()
+        self._create_input_fields()
         self.input_frame.pack(side="top", fill="x", padx=10, pady=10)
 
     def show_coordinate_search(self):
@@ -293,7 +290,7 @@ class TableGUI:
         self.go_button.configure(command=self.filter_and_plot_coordinates)
         self.input_frame.pack_forget()
         self.search_frame.pack_forget()
-        self.create_coordinate_search_fields()
+        self._create_coordinate_search_fields()
         self.coordinate_frame.pack(side="top", fill="x", padx=10, pady=10)
 
     def execute_search(self):
@@ -306,11 +303,11 @@ class TableGUI:
         for column, entry in self.search_entries.items():
             word = entry.get()
             #print(word[0:1])
-            if(word[0:1].isdigit()== True):
-                search_df = self.filter_Direct(self.df,word,column)
+            if word[0:1].isdigit():
+                search_df = self.filter_Direct(self.df, word, column)
             else:
-                if(word[1:2] != '='):
-                    if(word[0:1].isalpha() == False):
+                if word[1:2] != '=':
+                    if not word[0:1].isalpha():
                         wordop = word[:1]
                         word = word[1:]
                     else:
@@ -319,14 +316,15 @@ class TableGUI:
                     wordop = word[:2]
                     word = word[2:]
                 if column in self.string_columns:
-                    if len(word)!=0: 
+                    if len(word) != 0:
                         search_df = self.filter_string(self.df, word, column)
                 else:
-                    if len(word)!=0: 
-                        search_df = self.filter_General(self.df, firstOperator=wordop, firstNumber=word,columnName=column)      
+                    if len(word) != 0:
+                        search_df = self.filter_general(self.df, first_operator=wordop,
+                                                        first_number=word, column_name=column)
 
         self.df = search_df
-        self.update_table()
+        self._update_table()
 
     def filter_and_plot_coordinates(self):
         """
@@ -452,12 +450,12 @@ class TableGUI:
 
         self.df = pd.concat([df, input_df])
         self.undo_df = self.df
-        self.update_table()
+        self._update_table()
 
 
     def undo_filter(self):
         self.df = self.undo_df
-        self.update_table()
+        self._update_table()
 
     @staticmethod
     def filter_string(df, word=None, column_name=None):
@@ -465,7 +463,6 @@ class TableGUI:
         :param word: wort nachdem gesucht und verglichen wird
         :param column_name: Der Column-Name in der gefiltert werden soll
         :return: gefiltertes datafram
-
         """
         line_df = df
         if word is not None:
@@ -502,35 +499,32 @@ class TableGUI:
         return line_df
     
     @staticmethod
-    def filter_Direct(df, word=None, columnName = None):
+    def filter_Direct(df, word=None, column_name=None):
         """
         :param word: wort nachdem gesucht und verglichen wird
-        :param columnName: Der Column-Name in der gefiltert werden soll
+        :param column_name: Der Column-Name in der gefiltert werden soll
         :return: gefiltertes datafram
-
         """
-        if(word.isdigit()):
+        if word.isdigit():
             word = int(word)
         else:
             word = float(word)
         line_df = df
-        if(word != None):
-            line_df = df[df[columnName] == word]
+        if word is not None:
+            line_df = df[df[column_name] == word]
 
         return line_df
 
     @staticmethod
-    def filter_General(df, firstOperator = None, firstNumber = None, secondOperator = None, secondNumber = None, columnName = None):
+    def filter_general(df, first_operator=None, first_number=None, second_operator=None, second_number=None, column_name=None):
         """
-        
-        :param firstOperator: erster assignment operator nach dem gefiltert wird. Z.B >=
-        :param firstNumber: erste grösse nachdem gefiltert wird, z.b. 200
-        :param secondOperator: zweiter assignment operator nach dem gefiltert wird. Z.B <
-        :param secondNumber: zweite grösse nachdem gefiltert wird, z.b. 400
-        :param columnName: Der Column-Name in der gefiltert werden soll
+        :param first_operator: erster assignment operator nach dem gefiltert wird. Z.B >=
+        :param first_number: erste grösse nachdem gefiltert wird, z.b. 200
+        :param second_operator: zweiter assignment operator nach dem gefiltert wird. Z.B <
+        :param second_number: zweite grösse nachdem gefiltert wird, z.b. 400
+        :param column_name: Der Column-Name in der gefiltert werden soll
         :return: gefiltertes dataframe
         """
-
         ops = {
         "<": operator.lt,
         "<=": operator.le,
@@ -539,19 +533,18 @@ class TableGUI:
         ">=": operator.ge,
         ">": operator.gt
         } 
-        if(firstNumber.isdigit()):
-            firstNumber = int(firstNumber)
+        if first_number.isdigit():
+            first_number = int(first_number)
         else:
-            firstNumber = float(firstNumber)
+            first_number = float(first_number)
         #print(firstOperator)
         #print(firstNumber)
         line_df = df
-        if(firstOperator != None and secondNumber == None):
-            line_df = line_df[ops[firstOperator](line_df[columnName],firstNumber)]
-           
-            
-        if(firstOperator != None and secondNumber != None):
-            line_df = line_df[(ops[firstOperator](line_df[columnName],firstNumber)) & (ops[secondOperator](line_df[columnName],secondNumber))]
+        if first_operator is not None and second_number is None:
+            line_df = line_df[ops[first_operator](line_df[column_name], first_number)]
+        if first_operator is not None and second_number is not None:
+            line_df = line_df[(ops[first_operator](line_df[column_name], first_number))
+                              & (ops[second_operator](line_df[column_name], second_number))]
             
         return line_df 
 
@@ -568,17 +561,18 @@ class TableGUI:
 
 
 def read_data():
-    # silent warnings
+    """
+    Reads tabular data from a CSV file and preprocesses it for further use.
+    Returns:
+        pandas.DataFrame: A DataFrame containing the read data with processed coordinates.
+    """
     pd.set_option('future.no_silent_downcasting', True)
-    # Read data from CSV File
     df_perronkante = pd.read_csv('./Daten/perronkante.csv', sep=';')
     # Splitting the '1_koord' and '2_koord' columns into separate columns
     start_coords = df_perronkante['1_koord'].str.split(',', expand=True)
     end_coords = df_perronkante['2_koord'].str.split(',', expand=True)
-    # Renaming columns
     start_coords.columns = ['start_lat', 'start_long']
     end_coords.columns = ['end_lat', 'end_long']
-    # Concatenating start and end coordinates with original DataFrame
     df_perronkante = pd.concat([df_perronkante, start_coords, end_coords], axis=1)
     df_perronkante = df_perronkante.drop(['1_koord', '2_koord'], axis='columns')
     return df_perronkante
@@ -586,7 +580,7 @@ def read_data():
 
 def main():
     root = tk.Tk()
-    app = TableGUI(root)
+    app = TableGUI(root) #pylint: unused variable, but the Gui display does not work without the app
     root.mainloop()
 
 

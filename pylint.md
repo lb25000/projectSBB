@@ -1,4 +1,4 @@
-## Pylint Status am 11. May 2024
+## Pylint state on 11. May 2024
 ***1***
 ***- main.py:32:0: C0301: Line too long (103/100) (line-too-long)***
 ***- main.py:33:0: C0301: Line too long (102/100) (line-too-long)***
@@ -144,11 +144,32 @@ column_name
 - **main.py:462:12**: C0121: Comparison 'word != None' should be 'word is not None' (singleton-comparison)
 - **main.py:468:4**: C0103: Method name "filter_Float" doesn't conform to snake_case naming style (invalid-name)
 - **main.py:468:36**: C0103: Argument name "columnName" doesn't conform to snake_case naming style (invalid-name)
-- **main.py:476:12**: C0121: Comparison 'word != None' should be 'word is not None' (singleton-comparison)
-- **main.py:10:0**: R0904: Too many public methods (25/20) (too-many-public-methods)
+
+ ***10***
+***- main.py:10:0: R0904: Too many public methods (25/20) (too-many-public-methods)***
+```python
+def update_table(self):
+def insert_table_rows(self):
+def calculate_column_stats(self, column_name): 
+def show_column_stats(self, column_name):
+def create_search_fields(self): 
+def create_input_fields(self): 
+def create_coordinate_search_fields(self):
+```
+changed to
+````python
+def _update_table(self):
+def _insert_table_rows(self):
+def _calculate_column_stats(self, column_name): 
+def _show_column_stats(self, column_name):
+def _create_search_fields(self): 
+def _create_input_fields(self): 
+def _create_coordinate_search_fields(self):
+````
+
 - **main.py:493:0**: C0116: Missing function or method docstring (missing-function-docstring)
 
-***10***
+***11***
 ***-main.py:493:0: C0103: Function name "readData" doesn't conform to snake_case naming style (invalid-name)***
 ````python
 def readData():
@@ -164,3 +185,8 @@ def read_Data():
 -----------------------------------
 Your code has been rated at 7.99/10
 
+-----------------------------------
+***Rating after these and further corrections due to pylint***
+````python
+Your code has been rated at 9.10/10 (previous run: 8.69/10, +0.42)
+````
