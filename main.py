@@ -64,11 +64,10 @@ class TableGUI:
         # Entries
         self.search_entries = {}
         self.input_entries = {}
-        self.coordinate_entries = {}
         # Buttons
         self.create_buttons()
-
         self.pack_search_and_input()
+
         def change_cursor(event):
             """
             Change cursor if it is above a column that can be clicked on
@@ -243,14 +242,16 @@ class TableGUI:
         """
         Creates search fields for start and end coordinates.
         """
-        coordinate_columns = ["start_lat", "start_long", "end_lat", "end_long"]
-        for i, col in enumerate(coordinate_columns):
-            search_label = ttk.Label(self.coordinate_entries_frame, text=f"Search {col}:")
-            search_label.pack(side="left", padx=(10, 5), pady=5)
-            search_entry = ttk.Entry(self.coordinate_entries_frame)
-            search_entry.pack(side="left", padx=(0, 10), pady=5)
-            self.search_entries[col] = search_entry
-
+        coordinate_column = "Haltestellen Name"
+        # Create and pack the label
+        search_label = ttk.Label(self.coordinate_entries_frame, text=f"Search {coordinate_column}:")
+        search_label.pack(side="left", padx=(10, 5), pady=5)
+        # Create and pack the entry
+        search_entry = ttk.Entry(self.coordinate_entries_frame)
+        search_entry.pack(side="left", padx=(0, 10), pady=5)
+        # Store the entry widget in the dictionary
+        self.search_entries[coordinate_column] = search_entry
+        # Update the canvas with the new frame
         self.coordinate_canvas.create_window((0, 0), window=self.coordinate_entries_frame, anchor="nw")
         self.coordinate_entries_frame.update_idletasks()
         self.coordinate_canvas.config(scrollregion=self.coordinate_canvas.bbox("all"))
@@ -287,7 +288,7 @@ class TableGUI:
         """
         Show the coordinate search fields and configure the 'Go' button to filter and plot coordinates.
         """
-        self.go_button.configure(command=self.filter_and_plot_coordinates)
+        self.go_button.configure(command=self.filter_coordinates)
         self.input_frame.pack_forget()
         self.search_frame.pack_forget()
         self._create_coordinate_search_fields()
@@ -326,34 +327,25 @@ class TableGUI:
         self.df = search_df
         self._update_table()
 
-    def filter_and_plot_coordinates(self):
+    def filter_coordinates(self):
         """
         Takes input from user for coordinates and converts to float.
         """
+        station_name = self.search_entries["Haltestellen Name"].get()
+        #check user input
+        filtered_df = self.df[self.df["Haltestellen Name"] == station_name]
 
-        # check if all values are present
-        if (
-                not self.search_entries["start_long"].get()
-                or not self.search_entries["end_long"].get()
-                or not self.search_entries["start_lat"].get()
-                or not self.search_entries["end_lat"].get()
-        ):
-            self.show_feedback_window("All four coordinate values are required.")
+        print(filtered_df)
+        if filtered_df.empty:
+            self.show_feedback_window("No matching stations found.")
             return
-        # convert to float and check if values are valide input
-        try:
-            min_x = float(self.search_entries["start_long"].get())
-            max_x = float(self.search_entries["end_long"].get())
-            min_y = float(self.search_entries["start_lat"].get())
-            max_y = float(self.search_entries["end_lat"].get())
-        except ValueError:
-            self.show_feedback_window("Invalid input for coordinate values.")
-            return
+        filtered_df.loc[:, 'start_long'] = filtered_df['start_long'].astype(float)
+        filtered_df.loc[:, 'start_lat'] = filtered_df['start_lat'].astype(float)
+        filtered_df.loc[:, 'end_long'] = filtered_df['end_long'].astype(float)
+        filtered_df.loc[:, 'end_lat'] = filtered_df['end_lat'].astype(float)
+        self.plot_map(filtered_df, station_name)
 
-
-        self.filter_and_plot_geographic_area(self.original_df, min_x, max_x, min_y, max_y)
-
-    def filter_and_plot_geographic_area(self, df, min_x, max_x, min_y, max_y):
+    def plot_map(self, df, station_name):
         """
         Filters the DataFrame for entries that are located in a specific geographical area,
         and displays the results graphically.
@@ -374,37 +366,30 @@ class TableGUI:
             'urcrnrlat': 47.8085,
         }
         # base map for switzerland
+        switzerland_coords = {
+            'lat_0': 46.8182,
+            'lon_0': 8.2275,
+            'llcrnrlon': 5.9561,
+            'llcrnrlat': 45.818,
+            'urcrnrlon': 10.4921,
+            'urcrnrlat': 47.8085,
+        }
+        # base map for switzerland
         m = Basemap(**switzerland_coords, projection='merc', resolution='h')
-
-        df['start_lat'] = df['start_lat'].astype(float)
-        df['end_lat'] = df['end_lat'].astype(float)
-        df['start_long'] = df['start_long'].astype(float)
-        df['end_long'] = df['end_long'].astype(float)
-
-        # Filtering the DataFrame by coordinates in the geographical area
-        filtered_df = df[(df['start_lat'] >= min_y) & (df['start_lat'] <= max_y) &
-                         (df['start_long'] >= min_x) & (df['start_long'] <= max_x) |
-                         (df['end_lat'] >= min_y) & (df['end_lat'] <= max_y) &
-                         (df['end_long'] >= min_x) & (df['end_long'] <= max_x)]
-
-        # transform coordinates into format vor base map
-        x_start, y_start = m(filtered_df['start_long'].values, filtered_df['start_lat'].values)
-        x_end, y_end = m(filtered_df['end_long'].values, filtered_df['end_lat'].values)
-
         # draw borders
         m.drawcoastlines()
         m.drawcountries()
         m.drawmapboundary()
-
-        # scatter coordinates
-        m.scatter(x_start, y_start, marker='o', color='b', label='Startpunkt', zorder=5, s=0.5)
-        m.scatter(x_end, y_end, marker='o', color='b', label='Endpunkt', zorder=5, s=0.5)
+        # transform coordinates into format vor base map
+        x_start, y_start = m(df['start_long'].values, df['start_lat'].values)
+        x_end, y_end = m(df['end_long'].values, df['end_lat'].values)
+        # Scatter start and end coordinates
+        m.scatter(x_start, y_start, marker='o', color='b', label='Startpunkt', zorder=5, s=5)
+        m.scatter(x_end, y_end, marker='o', color='b', label='Endpunkt', zorder=5, s=5)
         fig = plt.gcf()
-
         # create a new window
         map_window = tk.Toplevel(self.master)
-        map_window.title("Stations within the searched coordinates ")
-
+        map_window.title(station_name)
         # convert to Tkinter Widget
         canvas = FigureCanvasTkAgg(fig, master=map_window)
         canvas.draw()
@@ -454,6 +439,9 @@ class TableGUI:
 
 
     def undo_filter(self):
+        """
+        Reverts the DataFrame to its state before any filtering operations.
+        """
         self.df = self.undo_df
         self._update_table()
 
