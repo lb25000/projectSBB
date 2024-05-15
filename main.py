@@ -149,7 +149,7 @@ class TableGUI:
             ("Add", self.show_input_fields),
             ("Go", self.execute_search),
             ("Undo filters", self.undo_filter),
-            ("Plot coordinates", self.show_coordinate_search)
+            ("Plot station", self.show_coordinate_search)
         ]
         for text, command in buttons:
             if text == "Go":
@@ -357,14 +357,6 @@ class TableGUI:
         :param max_y: Maximum y-coordinate of the geographical area (LV95).
         """
 
-        switzerland_coords = {
-            'lat_0': 46.8182,
-            'lon_0': 8.2275,
-            'llcrnrlon': 5.9561,
-            'llcrnrlat': 45.818,
-            'urcrnrlon': 10.4921,
-            'urcrnrlat': 47.8085,
-        }
         # base map for switzerland
         switzerland_coords = {
             'lat_0': 46.8182,
@@ -384,8 +376,13 @@ class TableGUI:
         x_start, y_start = m(df['start_long'].values, df['start_lat'].values)
         x_end, y_end = m(df['end_long'].values, df['end_lat'].values)
         # Scatter start and end coordinates
-        m.scatter(x_start, y_start, marker='o', color='b', label='Startpunkt', zorder=5, s=5)
-        m.scatter(x_end, y_end, marker='o', color='b', label='Endpunkt', zorder=5, s=5)
+        m.scatter(x_start, y_start, marker='o', color='b', label=station_name, zorder=5, s=5)
+        m.scatter(x_end, y_end, marker='o', color='b', label=station_name, zorder=5, s=5)
+        # Calculate the center of the point cloud
+        x_center = (x_start.mean() + x_end.mean()) / 2
+        y_center = (y_start.mean() + y_end.mean()) / 2
+        # Add station_name as label for the center of the point cloud
+        plt.text(x_center, y_center, station_name, fontsize=8, ha='center', color='black')
         fig = plt.gcf()
         # create a new window
         map_window = tk.Toplevel(self.master)

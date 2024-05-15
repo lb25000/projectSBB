@@ -19,7 +19,7 @@ and visualization, this tool aims to make the analysis process more efficient an
 ## Prerequisites
 - python
 - pandas
-- atplotlib
+- matplotlib
 - basemap
 - basemap-data-hires
 - tk
