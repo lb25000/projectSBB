@@ -1,3 +1,5 @@
+# Changes
+
 Abstraction examples in code:
 
 - The search function filter_general() accepts integers, floats with assignment operators like <= and also outputs a new dataframe. It doesnt matter if an integer, a different assignment operator or a float is given via a parameter.
