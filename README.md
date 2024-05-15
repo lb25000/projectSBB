@@ -21,10 +21,18 @@ To start the application, run:
 ````python
 python main.py
 ````
+or for newer versions
+```python
+python3 main.py
+```
+
+
 The main application window will appear, displaying the table with the data.
 Use the provided buttons to interact with the data.
 Move the mouse over the column headings, if the mouse becomes an index finger,
 the column can be clicked on.
+
+
 
 ## Prerequisites
 - python
