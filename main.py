@@ -445,9 +445,9 @@ class TableGUI:
     @staticmethod
     def filter_string(df, word=None, column_name=None):
         """
-        :param word: wort nachdem gesucht und verglichen wird
-        :param column_name: Der Column-Name in der gefiltert werden soll
-        :return: gefiltertes datafram
+        :param word: word to be searched and compared
+        :param column_name: The column name to filter on
+        :return: filtered dataframe
         """
         line_df = df
         if word is not None:
@@ -458,10 +458,9 @@ class TableGUI:
     @staticmethod
     def filter_integer(df, word=None, column_name=None):
         """
-        :param word: wort nachdem gesucht und verglichen wird
-        :param column_name: Der Column-Name in der gefiltert werden soll
-        :return: gefiltertes datafram
-
+        :param word: Word to be searched and compared
+        :param column_name: The column name to filter on
+        :return: Filtered dataframe
         """
         line_df = df
         if word is not None:
@@ -486,9 +485,9 @@ class TableGUI:
     @staticmethod
     def filter_Direct(df, word=None, column_name=None):
         """
-        :param word: wort nachdem gesucht und verglichen wird
-        :param column_name: Der Column-Name in der gefiltert werden soll
-        :return: gefiltertes datafram
+        :param word: Word to search for and compare
+        :param column_name: The column name to filter on
+        :return: Filtered dataframe
         """
         if word.isdigit():
             word = int(word)
@@ -548,8 +547,7 @@ class TableGUI:
 def read_data():
     """
     Reads tabular data from a CSV file and preprocesses it for further use.
-    Returns:
-        pandas.DataFrame: A DataFrame containing the read data with processed coordinates.
+    Returns: pandas.DataFrame: A DataFrame containing the read data with processed coordinates.
     """
     pd.set_option('future.no_silent_downcasting', True)
     df_perronkante = pd.read_csv('./Daten/perronkante.csv', sep=';')
