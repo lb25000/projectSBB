@@ -16,6 +16,20 @@ and visualization, this tool aims to make the analysis process more efficient an
 - **Visualisation:** The tool provides a good visualisation to enhance the understanding of the data.
 - **Dynamic Visualization:** Users can dynamically select the information they want to visualize, making the analysis process more flexible and interactive.
 
+## Prerequisites
+- python
+- pandas
+- atplotlib
+- basemap
+- basemap-data-hires
+- tk
+
+To install the necessary dependencies, run:
+````python
+pip install pandas numpy matplotlib basemap basemap-data-hires tk
+````
+
+
 ## How to Get Started
 To start the application, run:
 ````python
@@ -32,22 +46,15 @@ Use the provided buttons to interact with the data.
 Move the mouse over the column headings, if the mouse becomes an index finger,
 the column can be clicked on.
 
-
-
-## Prerequisites
-- python
-- pandas
-- atplotlib
-- basemap
-- basemap-data-hires
-- tk
-
-To install the necessary dependencies, run:
-````python
-pip install pandas numpy matplotlib basemap basemap-data-hires tk
-````
-
-
+If a virtual environment is used, activate this:
+- macOS/Linux:
+```python
+source venv/bin/activate
+```
+- windows:
+```python
+venv\Scripts\activate
+```
 
 ## Version Control
 
