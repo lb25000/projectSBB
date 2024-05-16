@@ -74,6 +74,9 @@ venv\Scripts\activate
 
 ## Version Control
 
+### Version 1.1.1 - May 23, 2024
+- Improved control over data flow
+
 ### Version 1.1.0 - May 16, 2024
 
 - Feature 1: Display the coordinates of the stations on a map
