@@ -240,7 +240,7 @@ class TableGUI:
 
     def _create_coordinate_search_fields(self):
         """
-        Creates search fields for start and end coordinates.
+        Creates search fields for station name, used to plot coordinates.
         """
         coordinate_column = "Haltestellen Name"
         # Create and pack the label
@@ -300,30 +300,39 @@ class TableGUI:
            Iterates through each search entry and its corresponding column.Filters the DataFrame
             based on the search criteria provided.
            """
-        search_df = self.original_df.copy()  # Kopie der ursprünglichen Tabelle erstellen
-        for column, entry in self.search_entries.items():
-            word = entry.get()
-            #print(word[0:1])
-            if word[0:1].isdigit():
-                search_df = self.filter_Direct(self.df, word, column)
-            else:
-                if word[1:2] != '=':
-                    if not word[0:1].isalpha():
-                        wordop = word[:1]
-                        word = word[1:]
+        search_df = self.original_df.copy()
+        all_empty = all(not entry.get() for entry in self.search_entries.values())
+        if all_empty:
+            self.show_feedback_window("Please enter at least one value.")
+            return
+        try:
+            wordop = None
+            for column, entry in self.search_entries.items():
+                word = entry.get()
+                #print(word[0:1])
+                if word[0:1].isdigit():
+                    search_df = self.filter_Direct(self.df, word, column)
+                else:
+                    if word[1:2] != '=':
+                        if not word[0:1].isalpha():
+                            wordop = word[:1]
+                            word = word[1:]
+                        else:
+                            word = word
                     else:
-                        word = word
-                else:
-                    wordop = word[:2]
-                    word = word[2:]
-                if column in self.string_columns:
-                    if len(word) != 0:
-                        search_df = self.filter_string(self.df, word, column)
-                else:
-                    if len(word) != 0:
-                        search_df = self.filter_general(self.df, first_operator=wordop,
-                                                        first_number=word, column_name=column)
-
+                        wordop = word[:2]
+                        word = word[2:]
+                    if column in self.string_columns:
+                        if len(word) != 0:
+                            search_df = self.filter_string(self.df, word, column)
+                    else:
+                        if len(word) != 0:
+                            search_df = self.filter_general(self.df, first_operator=wordop,
+                                                            first_number=word, column_name=column)
+        except:
+            self.show_feedback_window("Invalid search entry: An error occurred during search. "
+                                      "Please check your input")
+            return
         self.df = search_df
         self._update_table()
 
@@ -332,17 +341,19 @@ class TableGUI:
         Takes input from user for coordinates and converts to float.
         """
         station_name = self.search_entries["Haltestellen Name"].get()
-        #check user input
         filtered_df = self.df[self.df["Haltestellen Name"] == station_name]
-
-        print(filtered_df)
+        #check user input
         if filtered_df.empty:
-            self.show_feedback_window("No matching stations found.")
+            self.show_feedback_window(f"No matching stations with name {station_name} found.")
+            return
+        if filtered_df[['start_long', 'start_lat', 'end_long', 'end_lat']].isna().all().any():
+            self.show_feedback_window("This station has no coordinates to plot.")
             return
         filtered_df.loc[:, 'start_long'] = filtered_df['start_long'].astype(float)
         filtered_df.loc[:, 'start_lat'] = filtered_df['start_lat'].astype(float)
         filtered_df.loc[:, 'end_long'] = filtered_df['end_long'].astype(float)
         filtered_df.loc[:, 'end_lat'] = filtered_df['end_lat'].astype(float)
+        print(filtered_df)
         self.plot_map(filtered_df, station_name)
 
     def plot_map(self, df, station_name):
