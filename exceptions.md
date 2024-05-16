@@ -6,7 +6,7 @@ In many cases, a certain error is to be expected, e.g. wrong data type or empty 
 If the errors are less predictable or if various errors are to be intercepted, we use `try except`.
 
 
-Check for empty input and unexcepted input in `execute_search()````y
+Check for empty input and unexcepted input in `execute_search()`
 ````python
         all_empty = all(not entry.get() for entry in self.search_entries.values())
         if all_empty:
