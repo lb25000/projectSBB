@@ -34,7 +34,10 @@ pip install pandas numpy matplotlib basemap basemap-data-hires tk
 ```
 
 or for newer versions:
+
+```python
 pip3 install pandas numpy matplotlib basemap basemap-data-hires tk
+```
 
 ## How to Get Started
 
