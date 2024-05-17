@@ -4,6 +4,7 @@ This module implements a GUI application for interacting with tabular data.
 import tkinter as tk
 from tkinter import ttk
 import operator
+import webbrowser
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -33,8 +34,8 @@ class TableGUI:
                                "Perron Nummer", "Kundengleisnummer", "Perronkantenhöhe",
                                "Bemerkung Höhe", "Hilfstritt", "Höhenverlauf", "Material",
                                "Bemerkung Material", "Kantenart", "Bemerkung Kantenkrone",
-                               "Auftritt", "lod", "start_lon", "start_lat",
-                               "end_lon", "end_lat"]
+                               "Auftritt", "lod", "start_long", "start_lat",
+                               "end_long", "end_lat"]
 
         # Frame for table
         self.table_frame = ttk.Frame(master)
@@ -86,6 +87,8 @@ class TableGUI:
         for col in self.df.columns:
             self.table.heading(col, text=col, command=lambda c=col: self._show_column_stats(c))
             self.table.bind("<Motion>", change_cursor, "+")
+        # Bind the hyperlink click event
+        self.table.bind("<Button-1>", self.on_click)
 
 
 
@@ -541,7 +544,7 @@ class TableGUI:
             line_df = line_df[(ops[first_operator](line_df[column_name], first_number))
                               & (ops[second_operator](line_df[column_name], second_number))]
             
-        return line_df 
+        return line_df
 
     def show_feedback_window(self, message):
         """
@@ -552,6 +555,21 @@ class TableGUI:
         feedback_window.title("Feedback")
         feedback_label = ttk.Label(feedback_window, text=message)
         feedback_label.pack(padx=10, pady=10)
+
+
+    def on_click(self, event):
+        """
+        Handle clicks on the 'lod' column to open URLs in a web browser.
+        """
+        item = self.table.identify_row(event.y)
+        column = self.table.identify_column(event.x)
+        col_index = int(column.replace('#', '')) - 1
+        col_name = self.df.columns[col_index]
+
+        if col_name == "lod":
+            value = self.table.item(item, "values")[col_index]
+            if value.startswith("http"):
+                webbrowser.open(value)
 
 
 
