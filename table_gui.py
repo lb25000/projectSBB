@@ -19,9 +19,9 @@ class TableGUI:
     def __init__(self, master):
         self.master = master
         self.master.title("Table GUI")
-        self.master.geometry("800x400")  # Größe der GUI anpassen
+        self.master.geometry("800x400")  # Adjust the size of the GUI
 
-        # DataFrame einlesen
+        # Read DataFrame
         self.df = read_data()
         # copy original df, to have a backup
         self.original_df = self.df.copy()
@@ -41,7 +41,7 @@ class TableGUI:
         self.table_frame = ttk.Frame(master)
         self.table_frame.pack(padx=10, pady=10, fill="both", expand=True)
 
-        # Style für die Tabelle anpassen, um Linien zwischen den Zellen anzuzeigen
+        # Customise style for the table to display lines between the cells
         style = ttk.Style()
         style.configure("Treeview", font=('Helvetica', 10), rowheight=25,
                         foreground="black", background="white")
@@ -49,11 +49,11 @@ class TableGUI:
                         background="#eaeaea", relief="raised")
         style.map("Treeview", background=[('selected', '#add8e6')])
 
-        # Tabelle erstellen
+        # Create table
         self.create_table()
-        # Zeilen in der Tabelle einfügen
+        # Insert rows in the table
         self._insert_table_rows()
-        # Scrollbars für die Tabelle hinzufügen
+        # Add scrollbars for the table
         self.create_scrollbars_in_table()
         self.search_frame = ttk.Frame(master)
         self.input_frame = ttk.Frame(master)
@@ -165,7 +165,7 @@ class TableGUI:
     def _update_table(self):
         """
         Updates the table by removing all existing rows and inserting
-         rows from the updated DataFrame.
+        rows from the updated DataFrame.
         """
         for row in self.table.get_children():
             self.table.delete(row)
@@ -228,7 +228,7 @@ class TableGUI:
         """
         num_cols = 4
         for i, col in enumerate(self.df.columns):
-            if col != "ID":  # Beispiel: "ID" ist eine Spalte, die nicht bearbeitet werden soll
+            if col != "ID":  # Example: "ID" is a column that should not be edited
                 input_label = ttk.Label(self.input_entries_frame, text=f"Enter {col}:")
                 input_label.grid(row=i // num_cols, column=i % num_cols * 2, sticky="e",
                                  padx=(10, 5), pady=5)
@@ -238,7 +238,7 @@ class TableGUI:
                 self.input_entries[col] = input_entry
 
         self.input_canvas.create_window((0, 0), window=self.input_entries_frame, anchor="nw")
-        self.input_entries_frame.update_idletasks()  # Für die Berechnung der Größe des Canvas-Widgets
+        self.input_entries_frame.update_idletasks()  # To calculate the size of the canvas widget
         self.input_canvas.config(scrollregion=self.input_canvas.bbox("all"))
 
     def _create_coordinate_search_fields(self):
@@ -255,7 +255,8 @@ class TableGUI:
         # Store the entry widget in the dictionary
         self.search_entries[coordinate_column] = search_entry
         # Update the canvas with the new frame
-        self.coordinate_canvas.create_window((0, 0), window=self.coordinate_entries_frame, anchor="nw")
+        self.coordinate_canvas.create_window((0, 0), window=self.coordinate_entries_frame, 
+                                             anchor="nw")
         self.coordinate_entries_frame.update_idletasks()
         self.coordinate_canvas.config(scrollregion=self.coordinate_canvas.bbox("all"))
 
@@ -312,7 +313,6 @@ class TableGUI:
             wordop = None
             for column, entry in self.search_entries.items():
                 word = entry.get()
-                #print(word[0:1])
                 if word[0:1].isdigit():
                     search_df = FilterFunctions.filter_direct(self.df, word, column)
                 else:
@@ -330,12 +330,11 @@ class TableGUI:
                             search_df = FilterFunctions.filter_string(self.df, word, column)
                     else:
                         if len(word) != 0:
-                            search_df = FilterFunctions.filter_general(self.df, first_operator=wordop,
-                                                            first_number=word, column_name=column)
-        except:
+                            search_df = FilterFunctions.filter_general(self.df,
+                                    first_operator=wordop, first_number=word, column_name=column)
+        finally:
             show_feedback_window(self, "Invalid search entry: An error occurred during search. "
                                       "Please check your input")
-            return
         self.df = search_df
         self._update_table()
 
@@ -355,8 +354,7 @@ class TableGUI:
         filtered_df.loc[:, 'start_long'] = filtered_df['start_long'].astype(float)
         filtered_df.loc[:, 'start_lat'] = filtered_df['start_lat'].astype(float)
         filtered_df.loc[:, 'end_long'] = filtered_df['end_long'].astype(float)
-        filtered_df.loc[:, 'end_lat'] = filtered_df['end_lat'].astype(float)
-        
+        filtered_df.loc[:, 'end_lat'] = filtered_df['end_lat'].astype(float)       
         plot_map(self, filtered_df, station_name)
 
     def execute_input(self):
