@@ -52,3 +52,4 @@ def plot_map(self, df, station_name):
     canvas = FigureCanvasTkAgg(fig, master=map_window)
     canvas.draw()
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+    

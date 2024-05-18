@@ -46,7 +46,7 @@ class FilterFunctions:
             line_df = df[df[column_name] == float(word)]
 
         return line_df
-    
+
     @staticmethod
     def filter_direct(df, word=None, column_name=None):
         """
@@ -65,7 +65,8 @@ class FilterFunctions:
         return line_df
 
     @staticmethod
-    def filter_general(df, first_operator=None, first_number=None, second_operator=None, second_number=None, column_name=None):
+    def filter_general(df, first_operator=None, first_number=None,
+                       second_operator=None, second_number=None, column_name=None):
         """
         :param first_operator: erster assignment operator nach dem gefiltert wird. Z.B >=
         :param first_number: erste grösse nachdem gefiltert wird, z.b. 200
@@ -81,7 +82,7 @@ class FilterFunctions:
         '!=': operator.ne,
         ">=": operator.ge,
         ">": operator.gt
-        } 
+        }
         if first_number.isdigit():
             first_number = int(first_number)
         else:
@@ -92,5 +93,6 @@ class FilterFunctions:
         if first_operator is not None and second_number is not None:
             line_df = line_df[(ops[first_operator](line_df[column_name], first_number))
                               & (ops[second_operator](line_df[column_name], second_number))]
-            
+
         return line_df
+    

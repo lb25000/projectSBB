@@ -255,7 +255,7 @@ class TableGUI:
         # Store the entry widget in the dictionary
         self.search_entries[coordinate_column] = search_entry
         # Update the canvas with the new frame
-        self.coordinate_canvas.create_window((0, 0), window=self.coordinate_entries_frame, 
+        self.coordinate_canvas.create_window((0, 0), window=self.coordinate_entries_frame,
                                              anchor="nw")
         self.coordinate_entries_frame.update_idletasks()
         self.coordinate_canvas.config(scrollregion=self.coordinate_canvas.bbox("all"))
@@ -290,7 +290,8 @@ class TableGUI:
 
     def show_coordinate_search(self):
         """
-        Show the coordinate search fields and configure the 'Go' button to filter and plot coordinates.
+        Show the coordinate search fields 
+        and configure the 'Go' button to filter and plot coordinates.
         """
         self.go_button.configure(command=self.filter_coordinates)
         self.input_frame.pack_forget()
@@ -320,8 +321,6 @@ class TableGUI:
                         if not word[0:1].isalpha():
                             wordop = word[:1]
                             word = word[1:]
-                        else:
-                            word = word
                     else:
                         wordop = word[:2]
                         word = word[2:]
@@ -354,7 +353,7 @@ class TableGUI:
         filtered_df.loc[:, 'start_long'] = filtered_df['start_long'].astype(float)
         filtered_df.loc[:, 'start_lat'] = filtered_df['start_lat'].astype(float)
         filtered_df.loc[:, 'end_long'] = filtered_df['end_long'].astype(float)
-        filtered_df.loc[:, 'end_lat'] = filtered_df['end_lat'].astype(float)       
+        filtered_df.loc[:, 'end_lat'] = filtered_df['end_lat'].astype(float)
         plot_map(self, filtered_df, station_name)
 
     def execute_input(self):
@@ -378,15 +377,18 @@ class TableGUI:
                 elif len(word) == 0:
                     input_df.loc[0, column] = np.NaN
                 else:
-                    show_feedback_window(self, f"Invalid input for column '{column}'. Please enter an integer value.")
+                    show_feedback_window(self,
+                        f"Invalid input for column '{column}'. Please enter an integer value.")
                     return
             elif column in self.float_columns:
-                if len(word) != 0 and (word.replace('.', '', 1).isdigit() or word.replace(',', '', 1).isdigit()):
+                if len(word) != 0 and (word.replace('.', '', 1).isdigit()
+                                       or word.replace(',', '', 1).isdigit()):
                     input_df.loc[0, column] = float(word)
                 elif len(word) == 0:
                     input_df.loc[0, column] = np.NaN
                 else:
-                    show_feedback_window(self, f"Invalid input for column '{column}'. Please enter a float value.")
+                    show_feedback_window(self,
+                        f"Invalid input for column '{column}'. Please enter a float value.")
                     return
 
 

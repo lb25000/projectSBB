@@ -13,3 +13,4 @@ def show_feedback_window(self, message):
     feedback_window.title("Feedback")
     feedback_label = ttk.Label(feedback_window, text=message)
     feedback_label.pack(padx=10, pady=10)
+    
