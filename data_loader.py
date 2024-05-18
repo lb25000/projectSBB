@@ -19,4 +19,4 @@ def read_data():
         df_perronkante = df_perronkante.drop(['1_koord', '2_koord'], axis='columns')
         return df_perronkante
     except Exception as e:
-        raise RuntimeError(f"Failed to read data: {e}")
+        raise RuntimeError(f"Failed to read data: {e}") from e
