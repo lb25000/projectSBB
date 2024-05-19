@@ -39,3 +39,9 @@ self.show_feedback_window(f"Invalid input for column '{column}'. Please enter a 
 
 self.show_feedback_window("Please enter values for at least one column.")
 ````
+try, except controls if something goes wrong by reading the data in ``read_data()``
+````python
+try: code to read data
+except Exception as e:
+    raise RuntimeError(f"Failed to read data: {e}") from e
+````
