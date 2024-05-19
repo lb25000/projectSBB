@@ -18,7 +18,7 @@ class FilterFunctions:
         :param column_name: The column name to filter on.
         :return: The filtered DataFrame.
         """
-        line_df = df  # Assign the DataFrame to a new variable
+        filtered_df = df  # Assign the DataFrame to a new variable
         if word is not None:
             word_in_capitals = word.upper()  # Convert the word to uppercase for comparison
             # Check if the specified column exists in the DataFrame
@@ -26,8 +26,8 @@ class FilterFunctions:
             # Replace all occurrences of pd.NA with False
             mask = mask.replace(pd.NA, False)
             # Filter the DataFrame based on the mask
-            line_df = df[mask]
-        return line_df
+            filtered_df = df[mask]
+        return filtered_df
 
     @staticmethod
     def filter_integer(df, word=None, column_name=None):
@@ -36,11 +36,11 @@ class FilterFunctions:
         :param column_name: The column name to filter on
         :return: Filtered dataframe
         """
-        line_df = df
+        filtered_df = df
         if word is not None:
-            line_df = df[df[column_name] == int(word)]
+            filtered_df = df[df[column_name] == int(word)]
 
-        return line_df
+        return filtered_df
 
     @staticmethod
     def filter_float(df, word=None, column_name=None):
@@ -48,13 +48,12 @@ class FilterFunctions:
         :param word: wort nachdem gesucht und verglichen wird
         :param column_name: Der Column-Name in der gefiltert werden soll
         :return: gefiltertes datafram
-
         """
-        line_df = df
+        filtered_df = df
         if word is not None:
-            line_df = df[df[column_name] == float(word)]
+            filtered_df = df[df[column_name] == float(word)]
 
-        return line_df
+        return filtered_df
 
     @staticmethod
     def filter_direct(df, word=None, column_name=None):
@@ -67,11 +66,11 @@ class FilterFunctions:
             word = int(word)
         else:
             word = float(word)
-        line_df = df
+        filtered_df = df
         if word is not None:
-            line_df = df[df[column_name] == word]
+            filtered_df = df[df[column_name] == word]
 
-        return line_df
+        return filtered_df
 
     @staticmethod
     def filter_general(df, first_operator=None, first_number=None,
@@ -90,18 +89,18 @@ class FilterFunctions:
         "==": operator.eq,
         '!=': operator.ne,
         ">=": operator.ge,
-        ">": operator.gt
+        ">": operator.gts
         }
         if first_number.isdigit():
             first_number = int(first_number)
         else:
             first_number = float(first_number)
-        line_df = df
+        filtered_df = df
         if first_operator is not None and second_number is None:
-            line_df = line_df[ops[first_operator](line_df[column_name], first_number)]
+            filtered_df = filtered_df[ops[first_operator](filtered_df[column_name], first_number)]
         if first_operator is not None and second_number is not None:
-            line_df = line_df[(ops[first_operator](line_df[column_name], first_number))
-                              & (ops[second_operator](line_df[column_name], second_number))]
+            filtered_df = filtered_df[(ops[first_operator](filtered_df[column_name], first_number))
+                              & (ops[second_operator](filtered_df[column_name], second_number))]
 
-        return line_df
+        return filtered_df
     
