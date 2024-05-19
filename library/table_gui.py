@@ -150,20 +150,22 @@ class TableGUI:
         button_frame = ttk.Frame(self.master)
         button_frame.pack()
 
-        buttons = [
-            ("Search", self.show_search_fields),
-            ("Add", self.show_input_fields),
-            ("Go", self.execute_search),
-            ("Undo filters", self.undo_filter),
-            ("Plot station", self.show_coordinate_search)
-        ]
-        for text, command in buttons:
-            if text == "Go":
-                self.go_button = ttk.Button(button_frame, text=text, command=command)
-                self.go_button.pack(side="left", padx=5)
-            else:
-                button = ttk.Button(button_frame, text=text, command=command)
-                button.pack(side="left", padx=5)
+        self.search_button = ttk.Button(button_frame, text="Search", command=self.show_search_fields)
+        self.search_button.pack(side="left", padx=5)
+
+        self.add_button = ttk.Button(button_frame, text="Add", command=self.show_input_fields)
+        self.add_button.pack(side="left", padx=5)
+
+        self.plot_button = ttk.Button(button_frame, text="Plot station", command=self.show_coordinate_search)
+        self.plot_button.pack(side="left", padx=5)
+
+        self.go_button = ttk.Button(button_frame, text="Go", command=self.execute_search)
+
+        self.hide_button = ttk.Button(button_frame, text="Hide", command=self.hide_frame)
+
+        self.undo_button = ttk.Button(button_frame, text="Undo filters", command=self.undo_filter)
+        self.undo_button.pack(side="left", padx=5)
+
 
     def _update_table(self):
         """
@@ -292,8 +294,15 @@ class TableGUI:
         Show the search fields and configure the 'Go' button to execute search.
         """
         self.go_button.configure(command=self.execute_search)
+        self.go_button.pack(side="left", padx=5)
+        self.hide_button.pack(side="left", padx=5)
+        self.undo_button.pack_forget()
+        self.undo_button.pack(side="left", padx=5)
         self.input_frame.pack_forget()
         self.coordinate_frame.pack_forget()
+        self.search_button.pack_forget()
+        self.add_button.pack_forget()
+        self.plot_button.pack_forget()
         self._create_search_fields()
         self.search_frame.pack(side="top", fill="x", padx=10, pady=10)
 
@@ -302,8 +311,15 @@ class TableGUI:
         Show the input fields and configure the 'Go' button to execute input.
         """
         self.go_button.configure(command=self.execute_input)
+        self.go_button.pack(side="left", padx=5)
+        self.hide_button.pack(side="left", padx=5)
+        self.undo_button.pack_forget()
+        self.undo_button.pack(side="left", padx=5)
         self.search_frame.pack_forget()
         self.coordinate_frame.pack_forget()
+        self.search_button.pack_forget()
+        self.add_button.pack_forget()
+        self.plot_button.pack_forget()
         self._create_input_fields()
         self.input_frame.pack(side="top", fill="x", padx=10, pady=10)
 
@@ -313,10 +329,32 @@ class TableGUI:
         and configure the 'Go' button to filter and plot coordinates.
         """
         self.go_button.configure(command=self.filter_coordinates)
+        self.go_button.pack(side="left", padx=5)
+        self.hide_button.pack(side="left", padx=5)
+        self.undo_button.pack_forget()
+        self.undo_button.pack(side="left", padx=5)
+        self.search_button.pack_forget()
+        self.add_button.pack_forget()
+        self.plot_button.pack_forget()
         self.input_frame.pack_forget()
         self.search_frame.pack_forget()
         self._create_coordinate_search_fields()
         self.coordinate_frame.pack(side="top", fill="x", padx=10, pady=10)
+
+    def hide_frame(self):
+        """
+        Hides the frame like coordinate_search, input_fields, search_fields.
+        """
+        self.input_frame.pack_forget()
+        self.search_frame.pack_forget()
+        self.coordinate_frame.pack_forget()
+        self.go_button.pack_forget()
+        self.hide_button.pack_forget()
+        self.undo_button.pack_forget()
+        self.search_button.pack(side="left", padx=5)
+        self.add_button.pack(side="left", padx=5)
+        self.plot_button.pack(side="left", padx=5)
+        self.undo_button.pack(side="left", padx=5)
 
     def execute_search(self):
         """
