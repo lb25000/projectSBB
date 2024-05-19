@@ -386,7 +386,7 @@ class TableGUI:
                         if len(word) != 0:
                             search_df = FilterFunctions.filter_general(self.df,
                                     first_operator=wordop, first_number=word, column_name=column)
-        finally:
+        except:
             show_feedback_window(self, "Invalid search entry: An error occurred during search. "
                                       "Please check your input")
         self.df = search_df
