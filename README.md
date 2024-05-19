@@ -76,6 +76,9 @@ venv\Scripts\activate
 
 ### Version 1.1.1 - May 23, 2024
 - Improved control over data flow
+- Feature 1: columns with categorical values can be clicked on and the number per characteristic is displayed
+- Feature 2: The column lod is a hyperlink
+
 
 ### Version 1.1.0 - May 16, 2024
 
