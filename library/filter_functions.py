@@ -2,6 +2,7 @@
 Contains the FilterFunctions class with static methods for filtering the DataFrame.
 """
 import operator
+import pandas as pd
 
 class FilterFunctions:
     """
@@ -10,15 +11,22 @@ class FilterFunctions:
     @staticmethod
     def filter_string(df, word=None, column_name=None):
         """
-        :param word: word to be searched and compared
-        :param column_name: The column name to filter on
-        :return: filtered dataframe
+        Filter the DataFrame based on a word in a specified column.
+        
+        :param df: The DataFrame to be filtered.
+        :param word: The word to be searched and compared.
+        :param column_name: The column name to filter on.
+        :return: The filtered DataFrame.
         """
-        line_df = df
+        line_df = df  # Assign the DataFrame to a new variable
         if word is not None:
-            word_in_capitals = word.upper
-            line_df = df[df[column_name].str.upper.contains(word_in_capitals) if column_name in df.columns else True]
-
+            word_in_capitals = word.upper()  # Convert the word to uppercase for comparison
+            # Check if the specified column exists in the DataFrame
+            mask = df[column_name].str.upper().str.contains(word_in_capitals) if column_name in df.columns else True
+            # Replace all occurrences of pd.NA with False
+            mask = mask.replace(pd.NA, False)
+            # Filter the DataFrame based on the mask
+            line_df = df[mask]
         return line_df
 
     @staticmethod
