@@ -6,6 +6,8 @@ from tkinter import ttk
 import webbrowser
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from data_loader import read_data
 from filter_functions import FilterFunctions
 from plotting import plot_map
@@ -81,6 +83,9 @@ class TableGUI:
                 col_name = self.df.columns[col_index]  # get column name
                 if col_name in self.integer_columns or col_name in self.float_columns:
                     widget.config(cursor="hand1")
+                if col_name in ['Perrontyp', 'Hilfstritt', 'Material',
+                                 'Höhenverlauf', 'Kantenart', 'Auftritt']:
+                    widget.config(cursor='hand2')
                 else:
                     widget.config(cursor="")
 
@@ -197,12 +202,42 @@ class TableGUI:
 
     def _show_column_stats(self, column_name):
         """
-        Shows statistics of integer or float column. 
+        Shows statistics of columns. 
         """
-        stats = self._calculate_column_stats(column_name)
-        if stats:
-            message = f"Min: {stats['min']}, Max: {stats['max']}, Mean: {stats['mean']}"
-            show_feedback_window(self, message)
+        if column_name in ['Perrontyp', 'Hilfstritt', 'Material',
+                            'Höhenverlauf', 'Kantenart', 'Auftritt']:
+            self._show_value_counts(column_name)
+        else:
+            stats = self._calculate_column_stats(column_name)
+            if stats:
+                message = f"Min: {stats['min']}, Max: {stats['max']}, Mean: {stats['mean']}"
+                show_feedback_window(self, message)
+
+                # Histogramm
+                column_data = self.df[column_name]
+                plt.figure(figsize=(8, 6))
+                plt.hist(column_data, bins=20, color='skyblue', edgecolor='black')
+                plt.xlabel(column_name)
+                plt.ylabel('Frequency')
+                plt.title(f'Histogram for {column_name}')
+                plt.grid(True)
+                fig = plt.gcf()
+                # create a new window
+                hist_window = tk.Toplevel(self.master)
+                hist_window.title(column_name)
+                # convert to Tkinter Widget
+                canvas = FigureCanvasTkAgg(fig, master=hist_window)
+                canvas.draw()
+                canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+    def _show_value_counts(self, column_name):
+        """
+        Show frequency of values in categorical columns
+        :param column_name: name of selected column
+        """
+        counts = self.df[column_name].value_counts()
+        message = f"{counts.to_string()}"
+        show_feedback_window(self, message)
 
     def _create_search_fields(self):
         """
