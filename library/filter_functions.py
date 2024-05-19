@@ -16,7 +16,8 @@ class FilterFunctions:
         """
         line_df = df
         if word is not None:
-            line_df = df[df[column_name] == word]
+            word_in_capitals = word.upper
+            line_df = df[df[column_name].str.upper.contains(word_in_capitals) if column_name in df.columns else True]
 
         return line_df
 
