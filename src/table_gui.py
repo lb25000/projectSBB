@@ -6,10 +6,10 @@ from tkinter import ttk
 import webbrowser
 import pandas as pd
 import numpy as np
-from data_loader import read_data
-from filter_functions import FilterFunctions
-from plotting import plot_map, plot_histogram
-from utils import show_feedback_window
+from src.data_loader import read_data
+from src.filter_functions import FilterFunctions
+from src.plotting import plot_map, plot_histogram
+from src.utils import show_feedback_window
 
 
 class TableGUI:

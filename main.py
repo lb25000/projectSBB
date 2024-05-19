@@ -2,7 +2,7 @@
 This module initializes the application and starts the main loop.
 """
 import tkinter as tk
-from table_gui import TableGUI
+from src.table_gui import TableGUI
 
 def on_closing(root):
     """

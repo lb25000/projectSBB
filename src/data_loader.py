@@ -9,7 +9,7 @@ def read_data():
     Returns: pandas.DataFrame: A DataFrame containing the read data with processed coordinates.
     """
     try:
-        df_perronkante = pd.read_csv('./Daten/perronkante.csv', sep=';')
+        df_perronkante = pd.read_csv('./data/perronkante.csv', sep=';')
         # Splitting the '1_koord' and '2_koord' columns into separate columns
         start_coords = df_perronkante['1_koord'].str.split(',', expand=True)
         end_coords = df_perronkante['2_koord'].str.split(',', expand=True)
