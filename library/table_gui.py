@@ -27,15 +27,11 @@ class TableGUI:
         self.original_df = self.df.copy()
         # copy original df to undo filters
         self.undo_df = self.original_df.copy()
-        # definition of numeric and string columns
-        self.integer_columns = ["Linie", "Didok-Nummer", "IPID", "FID", "BPUIC"]
-        self.float_columns = ["KM", "Perronkantenlänge", "GO_IPID"]
-        self.string_columns = ["Abkuerzung Bahnhof", "Haltestellen Name", "Perrontyp",
-                               "Perron Nummer", "Kundengleisnummer", "Perronkantenhöhe",
-                               "Bemerkung Höhe", "Hilfstritt", "Höhenverlauf", "Material",
-                               "Bemerkung Material", "Kantenart", "Bemerkung Kantenkrone",
-                               "Auftritt", "lod", "start_long", "start_lat",
-                               "end_long", "end_lat"]
+        # dynamically determine column types and define numeric and string columns
+        column_types = self.df.dtypes
+        self.integer_columns = column_types[column_types == 'int64'].index.tolist()
+        self.float_columns = column_types[column_types == 'float64'].index.tolist()
+        self.string_columns = column_types[column_types == 'object'].index.tolist()
 
         # Frame for table
         self.table_frame = ttk.Frame(master)
