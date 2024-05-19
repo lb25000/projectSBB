@@ -45,7 +45,7 @@ class TableGUI:
         style = ttk.Style()
         style.configure("Treeview", font=('Helvetica', 10), rowheight=25,
                         foreground="black", background="white")
-        style.configure("Treeview.Heading", font=('Helvetica', 10), foreground="black",
+        style.configure("Treeview.Heading", font=('Helvetica', 10, 'bold'), foreground="black",
                         background="#eaeaea", relief="raised")
         style.map("Treeview", background=[('selected', '#add8e6')])
 
@@ -76,16 +76,18 @@ class TableGUI:
             """
             widget = event.widget
             col = widget.identify_column(event.x)
+            current_cursor = widget.cget("cursor")
+            new_cursor = ""
             if col:
                 col_index = int(col.replace("#", "")) - 1  # get column index
                 col_name = self.df.columns[col_index]  # get column name
                 if col_name in self.integer_columns or col_name in self.float_columns:
-                    widget.config(cursor="hand1")
+                    new_cursor = 'hand1'
                 if col_name in ['Perrontyp', 'Hilfstritt', 'Material',
                                  'Höhenverlauf', 'Kantenart', 'Auftritt']:
-                    widget.config(cursor='hand2')
-                else:
-                    widget.config(cursor="")
+                    new_cursor = 'hand2'
+            if new_cursor != current_cursor:
+                widget.config(cursor=new_cursor)
 
         for col in self.df.columns:
             self.table.heading(col, text=col, command=lambda c=col: self._show_column_stats(c))

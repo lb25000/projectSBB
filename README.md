@@ -76,8 +76,10 @@ venv\Scripts\activate
 
 ### Version 1.1.1 - May 23, 2024
 - Improved control over data flow
+- Divided the code into several classes for better clarity and maintainability
+- the programme terminates as soon as the tkinter window is closed
 - Feature 1: columns with categorical values can be clicked on and the number per characteristic is displayed
-- Feature 2: The column lod is a hyperlink
+- Feature 2: The column "lod" is now a hyperlink
 
 
 ### Version 1.1.0 - May 16, 2024
