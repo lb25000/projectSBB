@@ -12,6 +12,8 @@ from library.plotting import plot_map, plot_histogram
 from library.utils import show_feedback_window
 
 
+
+
 class TableGUI:
     """
     User interaction is realised in this class as TableGUI.
@@ -359,7 +361,7 @@ class TableGUI:
            Executes the search functionality based on the input provided in the search fields.
            Iterates through each search entry and its corresponding column.Filters the DataFrame
             based on the search criteria provided.
-           """
+        """
         search_df = self.original_df.copy()
         all_empty = all(not entry.get() for entry in self.search_entries.values())
         if all_empty:
@@ -386,9 +388,17 @@ class TableGUI:
                         if len(word) != 0:
                             search_df = FilterFunctions.filter_general(self.df,
                                     first_operator=wordop, first_number=word, column_name=column)
-        except:
-            show_feedback_window(self, "Invalid search entry: An error occurred during search. "
-                                      "Please check your input")
+       
+        except ValueError as ve:
+            error_message = f"Value error: {str(ve)}. Please check your input"
+            print(error_message)
+            show_feedback_window(self, "An error occurred during search. Please check your input.")
+
+        except Exception as e:
+            error_message = f"An unexpected error occurred: {str(e)}"
+            print(error_message)
+            show_feedback_window(self, "An unexpected error occurred. Please try again later.")
+
         self.df = search_df
         self._update_table()
 
