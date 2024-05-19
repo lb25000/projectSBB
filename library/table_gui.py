@@ -6,13 +6,10 @@ from tkinter import ttk
 import webbrowser
 import pandas as pd
 import numpy as np
-from library.data_loader import read_data
-from library.filter_functions import FilterFunctions
-from library.plotting import plot_map, plot_histogram
-from library.utils import show_feedback_window
-
-
-
+from data_loader import read_data
+from filter_functions import FilterFunctions
+from plotting import plot_map, plot_histogram
+from utils import show_feedback_window
 
 class TableGUI:
     """
@@ -92,8 +89,6 @@ class TableGUI:
             self.table.bind("<Motion>", change_cursor, "+")
         # Bind the hyperlink click event
         self.table.bind("<Button-1>", self.on_click)
-
-
 
     def create_table(self):
         """
