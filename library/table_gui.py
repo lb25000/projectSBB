@@ -45,7 +45,7 @@ class TableGUI:
         style = ttk.Style()
         style.configure("Treeview", font=('Helvetica', 10), rowheight=25,
                         foreground="black", background="white")
-        style.configure("Treeview.Heading", font=('Helvetica', 10, 'bold'), foreground="black",
+        style.configure("Treeview.Heading", font=('Helvetica', 10, 'bold'), foreground="grey",
                         background="#eaeaea", relief="raised")
         style.map("Treeview", background=[('selected', '#add8e6')])
 
