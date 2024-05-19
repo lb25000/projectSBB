@@ -1,8 +1,5 @@
-tkinter
+tk
 pandas
 numpy
 Basemap
 matplotlib
-webbrowser
-FigureCanvasTkAgg
-operator
