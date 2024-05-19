@@ -52,4 +52,24 @@ def plot_map(self, df, station_name):
     canvas = FigureCanvasTkAgg(fig, master=map_window)
     canvas.draw()
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-    
+
+def plot_histogram(self, column_name):
+    """
+    Plots an histogram in a specific column.
+    :param column_name: name of specific column to get the histogram
+    """
+    column_data = self.df[column_name]
+    plt.figure(figsize=(8, 6))
+    plt.hist(column_data, bins=20, color='skyblue', edgecolor='black')
+    plt.xlabel(column_name)
+    plt.ylabel('Frequency')
+    plt.title(f'Histogram for {column_name}')
+    plt.grid(True)
+    fig = plt.gcf()
+    # create a new window
+    hist_window = tk.Toplevel(self.master)
+    hist_window.title(column_name)
+    # convert to Tkinter Widget
+    canvas = FigureCanvasTkAgg(fig, master=hist_window)
+    canvas.draw()
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)

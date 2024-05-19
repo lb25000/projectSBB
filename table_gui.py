@@ -6,11 +6,9 @@ from tkinter import ttk
 import webbrowser
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from data_loader import read_data
 from filter_functions import FilterFunctions
-from plotting import plot_map
+from plotting import plot_map, plot_histogram
 from utils import show_feedback_window
 
 
@@ -213,22 +211,8 @@ class TableGUI:
                 message = f"Min: {stats['min']}, Max: {stats['max']}, Mean: {stats['mean']}"
                 show_feedback_window(self, message)
 
-                # Histogramm
-                column_data = self.df[column_name]
-                plt.figure(figsize=(8, 6))
-                plt.hist(column_data, bins=20, color='skyblue', edgecolor='black')
-                plt.xlabel(column_name)
-                plt.ylabel('Frequency')
-                plt.title(f'Histogram for {column_name}')
-                plt.grid(True)
-                fig = plt.gcf()
-                # create a new window
-                hist_window = tk.Toplevel(self.master)
-                hist_window.title(column_name)
-                # convert to Tkinter Widget
-                canvas = FigureCanvasTkAgg(fig, master=hist_window)
-                canvas.draw()
-                canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+                # histogram
+                plot_histogram(self, column_name)
 
     def _show_value_counts(self, column_name):
         """
