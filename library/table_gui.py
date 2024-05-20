@@ -6,6 +6,8 @@ from tkinter import ttk
 import webbrowser
 import pandas as pd
 import numpy as np
+from PIL import Image, ImageTk
+import os
 from library.data_loader import read_data
 from library.filter_functions import FilterFunctions
 from library.plotting import plot_map, plot_histogram
@@ -19,6 +21,14 @@ class TableGUI:
         self.master = master
         self.master.title("Table GUI")
         self.master.geometry("800x400")  # Adjust the size of the GUI
+
+        # Set the path for the hyperlink icon
+        icon_path = os.path.join("image", "hyperlink.png")
+
+        # Load and resize the hyperlink icon using PIL
+        self.hyperlink_icon = Image.open(icon_path)
+        self.hyperlink_icon = self.hyperlink_icon.resize((18, 18))  # Change size as needed
+        self.hyperlink_icon = ImageTk.PhotoImage(self.hyperlink_icon)
 
         # Read DataFrame
         self.df = read_data()
@@ -98,7 +108,10 @@ class TableGUI:
         self.table["columns"] = list(self.df.columns)
         self.table["show"] = "headings"
         for col in self.df.columns:
-            self.table.heading(col, text=col)
+            if col == 'lod':
+                self.table.heading(col, text=col, image=self.hyperlink_icon, anchor='center')
+            else:
+                self.table.heading(col, text=col)
             self.table.column(col, width=100, minwidth=50, anchor="center")
         self.table.pack(side="left", fill="both", expand=True)
 
@@ -217,7 +230,10 @@ class TableGUI:
         :param column_name: name of selected column
         """
         counts = self.df[column_name].value_counts()
-        message = f"{counts.to_string()}"
+        total_count = counts.sum()
+        relative_percentages = ((counts / total_count) * 100).round(2).astype(str) + '%'
+        message = "Absolute frequencies:\n{}\n\nRelative percentages:\n{}".format(counts.to_string(),
+                                                                                  relative_percentages.to_string())
         show_feedback_window(self, message)
 
     def _create_search_fields(self):
