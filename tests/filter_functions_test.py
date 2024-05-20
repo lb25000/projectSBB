@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from filter_functions import FilterFunctions
+from library.filter_functions import FilterFunctions
 
 class TestFilterFunctions(unittest.TestCase):
 

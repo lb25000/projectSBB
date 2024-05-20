@@ -1,7 +1,7 @@
 import unittest
 import tkinter as tk
 import pandas as pd
-from table_gui import TableGUI
+from library.table_gui import TableGUI
 
 class TestTableGUI(unittest.TestCase):
 
