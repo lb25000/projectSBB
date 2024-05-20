@@ -89,7 +89,7 @@ class FilterFunctions:
         "==": operator.eq,
         '!=': operator.ne,
         ">=": operator.ge,
-        ">": operator.gts
+        ">": operator.gt
         }
         if first_number.isdigit():
             first_number = int(first_number)
