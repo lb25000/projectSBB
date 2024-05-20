@@ -39,11 +39,15 @@ class TestTableGUI(unittest.TestCase):
         Test the execute_search function with a valid input.
         """
         self.gui.show_search_fields()
-        self.gui.search_entries['Haltestellen Name'].insert(0, 'Ziegelbrucke')
+        self.gui.search_entries['Abkuerzung Bahnhof'].insert(0, 'Mou')
+        self.assertEqual(len(self.gui.df), 2, 'Should be 2')
         self.gui.execute_search()
 
-        self.assertEqual(len(self.gui.df), 1)
-        self.assertEqual(self.gui.df['Haltestellen Name'].iloc[0], 'Ziegelbrucke')
+        # Check if the df has the correct length after calling execute_search
+        self.assertEqual(len(self.gui.df), 1, 'Should be 1')
+
+        # Check if the filted df has the correct content after calling execute_search
+        self.assertEqual(self.gui.df['Abkuerzung Bahnhof'].iloc[0], 'MOU')
 
     def test_execute_search_invalid_input(self):
         """
@@ -51,8 +55,14 @@ class TestTableGUI(unittest.TestCase):
         """
         self.gui.show_search_fields()
         self.gui.search_entries['KM'].insert(0, 'invalid')
+
+        # Assert that a value error raises when entering a string when float is expected
         with self.assertRaises(ValueError):
             self.gui.execute_search()
+        
+        # Assert that the feedback window was shown with the correct message
+        feedback_window = self.gui.master.winfo_children()[-1]
+        self.assertIn("An error occurred during search. Please check your input.", feedback_window.winfo_children()[0].cget('text'))
 
     def test_execute_search_repeated_input(self):
         """
@@ -63,11 +73,19 @@ class TestTableGUI(unittest.TestCase):
         self.gui.execute_search()
         result_first = self.gui.df.copy()
 
-        self.gui.df = self.gui.original_df.copy()  # Reset dataframe
         self.gui.execute_search()
         result_second = self.gui.df.copy()
 
         pd.testing.assert_frame_equal(result_first, result_second)
+
+    def test_search_no_entries(self):
+        """
+        Test the search functionality with no search entries.
+        """
+        self.gui.execute_search()
+        
+        feedback_window = self.gui.master.winfo_children()[-1]
+        self.assertIn("Please enter at least one value.", feedback_window.winfo_children()[0].cget('text'))
 
     # Test the execute_input method:
 
@@ -75,7 +93,6 @@ class TestTableGUI(unittest.TestCase):
         """
         Test the execute_input function with valid input.
         """
-        self.gui.show_input_fields()
         self.gui.input_entries['Linie'].insert(0, '123')
         self.gui.input_entries['Abkuerzung Bahnhof'].insert(0, 'TEST')
         self.gui.input_entries['Haltestellen Name'].insert(0, 'Test Station')
@@ -86,6 +103,7 @@ class TestTableGUI(unittest.TestCase):
         self.gui.input_entries['end_lat'].insert(0, '47.31')
         self.gui.execute_input()
 
+        # Assert that the length of the df has updated to one more entry after execute_input was called
         self.assertEqual(len(self.gui.df), 3)
         self.assertEqual(self.gui.df['Haltestellen Name'].iloc[2], 'Test Station')
 
@@ -93,7 +111,6 @@ class TestTableGUI(unittest.TestCase):
         """
         Test the execute_input function with invalid input.
         """
-        self.gui.show_input_fields()
         self.gui.input_entries['KM'].insert(0, 'invalid')
         self.gui.execute_input()
         
@@ -104,21 +121,10 @@ class TestTableGUI(unittest.TestCase):
         """
         Test the execute_input function with no input.
         """
-        self.gui.show_input_fields()
         self.gui.execute_input()
         
         feedback_window = self.gui.master.winfo_children()[-1]
         self.assertIn("Please enter values for at least one column.", feedback_window.winfo_children()[0].cget('text'))
-
-    def test_search_no_entries(self):
-        """
-        Test the search functionality with no search entries.
-        """
-        self.gui.show_search_fields()
-        self.gui.execute_search()
-        
-        feedback_window = self.gui.master.winfo_children()[-1]
-        self.assertIn("Please enter at least one value.", feedback_window.winfo_children()[0].cget('text'))
 
 if __name__ == "__main__":
     unittest.main()
