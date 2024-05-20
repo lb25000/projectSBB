@@ -366,7 +366,7 @@ class TableGUI:
             wordop = None
             for column, entry in self.search_entries.items():
                 word = entry.get()
-                if word[0:1].isdigit():
+                if word[0:1].isdigit() and column not in self.string_columns:
                     search_df = FilterFunctions.filter_direct(self.df, word, column)
                 else:
                     if word[1:2] != '=':
@@ -377,6 +377,7 @@ class TableGUI:
                         wordop = word[:2]
                         word = word[2:]
                     if column in self.string_columns:
+                        word = entry.get()
                         if len(word) != 0:
                             search_df = FilterFunctions.filter_string(self.df, word, column)
                     else:
