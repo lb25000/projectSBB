@@ -1,5 +1,7 @@
-tk
-pandas
-numpy
-Basemap
-matplotlib
+
+pandas~=2.2.1
+numpy~=1.26.4
+Basemap~=1.4.1
+matplotlib~=3.8.4
+future~=1.0.0
+pillow~=10.3.0
