@@ -13,10 +13,10 @@
 - **Test Cases:**
   1. **Input:** "Mou" in the "Abkuerzung Bahnhof" column. (Valid input)
      - **Expected Output:** A DataFrame with one row where "Abkuerzung Bahnhof" is "MOU".
-  2. **Input:** "123" in the "Linie" column. (Valid input)
-     - **Expected Output:** A DataFrame with one row where "Linie" is 123.
-  3. **Input:** "10.5" in the "KM" column. (Invalid input)
-     - **Expected Output:** A feedback message indicating that an error occurred during search.
+  2. **Input:** "0 km" in the "KM" column.
+     - **Expected Output:** Feedback window with informative error message
+  3. **Input:** "Ziegelbrucke" in the "Haltestellen Name" column, twice!
+     - **Expected Output:** No error and two times the same (filtered) df.
   4. **Input:** Leave all search fields empty. (Invalid input)
      - **Expected Output:** A feedback message indicating that at least one value should be entered.
 
@@ -31,13 +31,11 @@
   The method might produce unexpected results. For instance, entering a non-numeric string for a numeric column or providing data in an incorrect format could lead to errors or unexpected behavior. This could result in the addition of incorrect data to the DataFrame or failure to add data altogether, affecting the integrity of the application's data handling.
 
 - **Test Cases:**
-  1. **Input:** Valid input data provided.
+  1. **Input:** New row of valid input data provided.
      - **Expected Output:** The function correctly adds a new row to the DataFrame.
-  2. **Input:** Invalid integer input provided.
-     - **Expected Output:** The function handles invalid integer input and provides feedback to the user.
-  3. **Input:** Invalid float input provided.
+  2. **Input:** Invalid input provided ('0 km' instead of 'km')
      - **Expected Output:** The function handles invalid float input and provides feedback to the user.
-  4. **Input:** Empty input provided.
+  3. **Input:** Empty input provided.
      - **Expected Output:** A feedback message indicating that values for at least one column should be entered.
 
 **Note:** In this test case, `pd.testing.assert_frame_equal` is preferred over `self.assertEqual` for comparing DataFrames due to its ability to handle comparison of DataFrames with NaN values correctly.
@@ -53,10 +51,10 @@
   The function might produce incorrect results if the string search is not handled properly, especially in terms of case sensitivity and partial matches.
 
 - **Test Cases:**
-  1. **Input:** "Zu" for the "Haltestellen Name" column. (Valid input, case-insensitive)
-     - **Expected Output:** A DataFrame with rows where "Haltestellen Name" contains "ZU", regardless of case.
-  2. **Input:** "Mou" for the "Haltestellen Name" column. (Valid input, case-insensitive)
-     - **Expected Output:** A DataFrame with rows where "Haltestellen Name" contains "MOU", regardless of case.
+  1. **Input:** "Z" for the "Haltestellen Name" column. (Valid input, case-insensitive)
+     - **Expected Output:** A DataFrame with all rows where "Haltestellen Name" contains "z", regardless of case (2 rows).
+  2. **Input:** "mou" for the "Abkuerzung Bahnhof" column. (Valid input, case-insensitive)
+     - **Expected Output:** A DataFrame with rows where "Abkuerzung Bahnhof" contains "MOU", regardless of case.
   3. **Input:** "Xyz" for the "Haltestellen Name" column. (No matches)
      - **Expected Output:** An empty DataFrame.
   4. **Input:** "" (empty string) for the "Haltestellen Name" column. (Empty input)
@@ -75,12 +73,10 @@
 - **Test Cases:**
   1. **Input:** "890" for the "Linie" column. (Valid input)
      - **Expected Output:** A DataFrame with rows where "Linie" is 890.
-  2. **Input:** "999" for the "Linie" column. (No matches)
-     - **Expected Output:** An empty DataFrame.
-  3. **Input:** "abc" for the "Linie" column. (Invalid input, non-integer string)
-     - **Expected Output:** An error or exception indicating invalid input.
-  4. **Input:** "" (empty string) for the "Linie" column. (Empty input)
-     - **Expected Output:** The original DataFrame without any filtering applied.
+  2. **Input:** "22" for the "Linie" column. (No matches)
+     - **Expected Output:** An empty DataFrame (no entry for line 226!)
+  3. **Input:** "890.0" for the "Linie" column. (Invalid input, non-integer string)
+     - **Expected Output:** Value Error
 
 **Note:** In this test case, `pd.testing.assert_frame_equal` is preferred over `self.assertEqual` for comparing DataFrames due to its ability to handle comparison of DataFrames with NaN values correctly.
 
