@@ -224,7 +224,7 @@ class TableGUI:
             return {
                 "min": column.min(),
                 "max": column.max(),
-                "mean": column.mean()
+                "mean": round(column.mean(), 3)
             }
         return None
 
@@ -369,6 +369,9 @@ class TableGUI:
         self.plot_button.pack_forget()
         self.input_frame.pack_forget()
         self.search_frame.pack_forget()
+        self.coordinate_entries_frame.pack_forget()
+        for widget in self.coordinate_entries_frame.winfo_children():
+           widget.destroy()
         self._create_coordinate_search_fields()
         self.coordinate_frame.pack(side="top", fill="x", padx=10, pady=10)
 
