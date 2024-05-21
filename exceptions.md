@@ -4,7 +4,7 @@ Since we process user input, we have decided to check the user input and,
 if it is not valid, to give the user feedback.
 We have introduced a feedback window for this purpose, which pops up if the user input is invalid.
 If the user input is not valid, the function is cancelled and the user is prompted to enter a new value.
-In many cases, a certain error is to be expected, e.g. wrong data type or empty input. In these cases, we use `if` statments.
+In many cases, a certain error is to be expected, e.g. wrong data type or empty input. In these cases, we use `if` statements.
 If the errors are less predictable or if various errors are to be intercepted, we use `try except`.
 
 Check for empty input and unexcepted input in `execute_search()`
@@ -18,9 +18,12 @@ Check for empty input and unexcepted input in `execute_search()`
 
 ```python
 try:
-except:
-    self.show_feedback_window("Invalid search entry: An error occurred during search. "
+except ValueError as ve:
+    show_feedback_window("Invalid search entry: An error occurred during search. "
                                       "Please check your input")
+except Exception as e:
+    show_feedback_window(self, "An unexpected error occurred. Please try again later.")
+
 ```
 
 Since we allow the user to enter new data without necessarily specifying coordinates,

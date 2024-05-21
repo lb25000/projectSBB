@@ -97,6 +97,7 @@ accordingly. Change `python` to `python3` if needed.
 - the programme terminates as soon as the tkinter window is closed
 - Feature 1: columns with categorical values can be clicked on and the number per characteristic is displayed
 - Feature 2: The column "lod" is now a hyperlink
+- Feature 3: Cursor logic improved so that it is more intuitive what can be clicked on.
 
 ### Version 1.1.0 - May 16, 2024
 
