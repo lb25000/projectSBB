@@ -86,22 +86,38 @@ class TableGUI:
         """
         Change cursor if it is above a column that can be clicked on
         :param event: mouse hovers over a column name
-         """
+        """
         widget = event.widget
         col = widget.identify_column(event.x)
         row = widget.identify_row(event.y)
         current_cursor = widget.cget("cursor")
-        new_cursor = ""
+
+        new_cursor = self.get_new_cursor(col, row)
+
+        if new_cursor != current_cursor:
+            widget.config(cursor=new_cursor)
+
+    def get_new_cursor(self, col, row):
+        """
+        Get the new cursor based on column and row
+        :param col: column identifier
+        :param row: row identifier
+        :return: new cursor
+        """
         if col and not row:
             col_index = int(col.replace("#", "")) - 1  # get column index
             col_name = self.df.columns[col_index]  # get column name
             if col_name in self.integer_columns or col_name in self.float_columns:
-                new_cursor = 'hand1'
+                return 'hand1'
             if col_name in ['Perrontyp', 'Hilfstritt', 'Material',
                             'Höhenverlauf', 'Kantenart', 'Auftritt']:
-                new_cursor = 'hand2'
-        if new_cursor != current_cursor:
-            widget.config(cursor=new_cursor)
+                return 'hand2'
+        elif row and col:
+            col_index = int(col.replace("#", "")) - 1  # get column index
+            col_name = self.df.columns[col_index]  # get column name
+            if col_name == 'lod':
+                return 'exchange'  # Set cursor to 'hand1' for 'lod' entries
+        return ''  # default cursor for other columns
 
 
     def create_table(self):
