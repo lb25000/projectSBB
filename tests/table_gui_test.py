@@ -10,6 +10,7 @@ class TestTableGUI(unittest.TestCase):
         Set up a sample dataframe and a root window for testing.
         """
         self.root = tk.Tk()
+        self.root.withdraw()  # Hide the Tkinter window
         self.sample_data = {
             "Linie": [890, 226],
             'Abkuerzung Bahnhof': ['ZB', 'MOU'],
@@ -38,37 +39,63 @@ class TestTableGUI(unittest.TestCase):
         """
         Test the execute_search function with a valid input.
         """
-        self.gui.show_search_fields()
+         # Initialize input entries for testing execute_input methods
+        self.gui.search_entries = {
+            'Linie': tk.Entry(self.root),
+            'Abkuerzung Bahnhof': tk.Entry(self.root),
+            'Haltestellen Name': tk.Entry(self.root),
+            'KM': tk.Entry(self.root),
+            'start_long': tk.Entry(self.root),
+            'start_lat': tk.Entry(self.root),
+            'end_long': tk.Entry(self.root),
+            'end_lat': tk.Entry(self.root)
+        }
         self.gui.search_entries['Abkuerzung Bahnhof'].insert(0, 'Mou')
         self.assertEqual(len(self.gui.df), 2, 'Should be 2')
         self.gui.execute_search()
 
-        # Check if the df has the correct length after calling execute_search
+        # Check whether the df has the correct length after calling execute_search
         self.assertEqual(len(self.gui.df), 1, 'Should be 1')
 
-        # Check if the filted df has the correct content after calling execute_search
+        # Check whether the filted df has the correct content after calling execute_search
         self.assertEqual(self.gui.df['Abkuerzung Bahnhof'].iloc[0], 'MOU')
 
     def test_execute_search_invalid_input(self):
         """
-        Test the execute_search function with an invalid input.
+        Test the execute_search function with an invalid input (correct type but inappropriate value).
         """
-        self.gui.show_search_fields()
-        self.gui.search_entries['KM'].insert(0, 'invalid')
-
-        # Assert that a value error raises when entering a string when float is expected
-        with self.assertRaises(ValueError):
-            self.gui.execute_search()
+        self.gui.search_entries = {
+            'Linie': tk.Entry(self.root),
+            'Abkuerzung Bahnhof': tk.Entry(self.root),
+            'Haltestellen Name': tk.Entry(self.root),
+            'KM': tk.Entry(self.root),
+            'start_long': tk.Entry(self.root),
+            'start_lat': tk.Entry(self.root),
+            'end_long': tk.Entry(self.root),
+            'end_lat': tk.Entry(self.root)
+        }
+        self.gui.search_entries['KM'].insert(0, '0 km')
+        self.gui.execute_search()
         
-        # Assert that the feedback window was shown with the correct message
+        # Assert that the feedback window was shown with the correct message to inform user about wrong entry
         feedback_window = self.gui.master.winfo_children()[-1]
-        self.assertIn("An error occurred during search. Please check your input.", feedback_window.winfo_children()[0].cget('text'))
+        self.assertIn("Invalid search entry. Please check your input. Use numbers for numeric fields and letters for text fields.", 
+                      feedback_window.winfo_children()[0].cget('text'))
 
     def test_execute_search_repeated_input(self):
         """
         Test executing the same search more than once results in the same output.
         """
-        self.gui.show_search_fields()
+        self.gui.search_entries = {
+            'Linie': tk.Entry(self.root),
+            'Abkuerzung Bahnhof': tk.Entry(self.root),
+            'Haltestellen Name': tk.Entry(self.root),
+            'KM': tk.Entry(self.root),
+            'start_long': tk.Entry(self.root),
+            'start_lat': tk.Entry(self.root),
+            'end_long': tk.Entry(self.root),
+            'end_lat': tk.Entry(self.root)
+        }
         self.gui.search_entries['Haltestellen Name'].insert(0, 'Ziegelbrucke')
         self.gui.execute_search()
         result_first = self.gui.df.copy()
@@ -93,6 +120,17 @@ class TestTableGUI(unittest.TestCase):
         """
         Test the execute_input function with valid input.
         """
+        # Initialize input entries for testing execute_input methods
+        self.gui.input_entries = {
+            'Linie': tk.Entry(self.root),
+            'Abkuerzung Bahnhof': tk.Entry(self.root),
+            'Haltestellen Name': tk.Entry(self.root),
+            'KM': tk.Entry(self.root),
+            'start_long': tk.Entry(self.root),
+            'start_lat': tk.Entry(self.root),
+            'end_long': tk.Entry(self.root),
+            'end_lat': tk.Entry(self.root)
+        }
         self.gui.input_entries['Linie'].insert(0, '123')
         self.gui.input_entries['Abkuerzung Bahnhof'].insert(0, 'TEST')
         self.gui.input_entries['Haltestellen Name'].insert(0, 'Test Station')
@@ -111,7 +149,18 @@ class TestTableGUI(unittest.TestCase):
         """
         Test the execute_input function with invalid input.
         """
-        self.gui.input_entries['KM'].insert(0, 'invalid')
+        # Initialize input entries for testing execute_input methods
+        self.gui.input_entries = {
+            'Linie': tk.Entry(self.root),
+            'Abkuerzung Bahnhof': tk.Entry(self.root),
+            'Haltestellen Name': tk.Entry(self.root),
+            'KM': tk.Entry(self.root),
+            'start_long': tk.Entry(self.root),
+            'start_lat': tk.Entry(self.root),
+            'end_long': tk.Entry(self.root),
+            'end_lat': tk.Entry(self.root)
+        }
+        self.gui.input_entries['KM'].insert(1, '0 km')
         self.gui.execute_input()
         
         feedback_window = self.gui.master.winfo_children()[-1]
