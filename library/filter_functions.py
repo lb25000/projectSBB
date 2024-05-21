@@ -104,3 +104,24 @@ class FilterFunctions:
 
         return filtered_df
     
+
+    @staticmethod
+    def filter_assignmentString(df, assignmentOp, word, column):
+        """
+        :param df: The dataframe
+        :param assignmentOp: Is the assignment operator to the word
+        :param word: Is the search word
+        :param column: The column where the search happens
+        :return: filtered dataframe
+        
+        """
+        filtered_df = df
+        ops = {
+            "==": operator.eq
+        }
+
+        filtered_df = df[df[column] == word]
+        return filtered_df
+
+
+    

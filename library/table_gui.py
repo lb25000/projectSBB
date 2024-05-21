@@ -369,9 +369,9 @@ class TableGUI:
 
     def execute_search(self):
         """
-           Executes the search functionality based on the input provided in the search fields.
-           Iterates through each search entry and its corresponding column.Filters the DataFrame
-            based on the search criteria provided.
+        Executes the search functionality based on the input provided in the search fields.
+        Iterates through each search entry and its corresponding column.Filters the DataFrame
+        based on the search criteria provided.
         """
         search_df = self.original_df.copy()
         all_empty = all(not entry.get() for entry in self.search_entries.values())
@@ -395,7 +395,10 @@ class TableGUI:
                     if column in self.string_columns:
                         word = entry.get()
                         if len(word) != 0:
-                            search_df = FilterFunctions.filter_string(self.df, word, column)
+                            if(wordop == '=='):
+                                search_df = FilterFunctions.filter_assignmentString(self.df, wordop, word[2:], column )
+                            else:
+                                search_df = FilterFunctions.filter_string(self.df, word, column)
                     else:
                         if len(word) != 0:
                             search_df = FilterFunctions.filter_general(self.df,
