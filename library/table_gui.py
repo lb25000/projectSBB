@@ -73,32 +73,36 @@ class TableGUI:
         # Buttons
         self.create_buttons()
         self.pack_search_and_input()
-
-        def change_cursor(event):
-            """
-            Change cursor if it is above a column that can be clicked on
-            :param event:
-            """
-            widget = event.widget
-            col = widget.identify_column(event.x)
-            current_cursor = widget.cget("cursor")
-            new_cursor = ""
-            if col:
-                col_index = int(col.replace("#", "")) - 1  # get column index
-                col_name = self.df.columns[col_index]  # get column name
-                if col_name in self.integer_columns or col_name in self.float_columns:
-                    new_cursor = 'hand1'
-                if col_name in ['Perrontyp', 'Hilfstritt', 'Material',
-                                 'Höhenverlauf', 'Kantenart', 'Auftritt']:
-                    new_cursor = 'hand2'
-            if new_cursor != current_cursor:
-                widget.config(cursor=new_cursor)
-
+        # Bind events to the table
         for col in self.df.columns:
             self.table.heading(col, text=col, command=lambda c=col: self._show_column_stats(c))
-            self.table.bind("<Motion>", change_cursor, "+")
+
         # Bind the hyperlink click event
         self.table.bind("<Button-1>", self.on_click)
+        # Bind the motion event for changing cursor
+        self.table.bind("<Motion>", self.change_cursor)
+
+    def change_cursor(self, event):
+        """
+        Change cursor if it is above a column that can be clicked on
+        :param event: mouse hovers over a column name
+         """
+        widget = event.widget
+        col = widget.identify_column(event.x)
+        row = widget.identify_row(event.y)
+        current_cursor = widget.cget("cursor")
+        new_cursor = ""
+        if col and not row:
+            col_index = int(col.replace("#", "")) - 1  # get column index
+            col_name = self.df.columns[col_index]  # get column name
+            if col_name in self.integer_columns or col_name in self.float_columns:
+                new_cursor = 'hand1'
+            if col_name in ['Perrontyp', 'Hilfstritt', 'Material',
+                            'Höhenverlauf', 'Kantenart', 'Auftritt']:
+                new_cursor = 'hand2'
+        if new_cursor != current_cursor:
+            widget.config(cursor=new_cursor)
+
 
     def create_table(self):
         """
