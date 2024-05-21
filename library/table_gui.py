@@ -407,8 +407,8 @@ class TableGUI:
         except ValueError as ve:
             error_message = f"Value error: {str(ve)}. Please check your input"
             print(error_message)
-            show_feedback_window(self, "An error occurred during search. Please check your input.")
-
+            show_feedback_window(self, "Invalid search entry. Please check your input. Use numbers for numeric fields and letters for text fields.")
+            
         except Exception as e:
             error_message = f"An unexpected error occurred: {str(e)}"
             print(error_message)
