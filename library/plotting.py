@@ -55,12 +55,12 @@ def plot_map(self, df, station_name):
 
 def plot_histogram(self, column_name):
     """
-    Plots an histogram in a specific column.
+    Plots a histogram in a specific column.
     :param column_name: name of specific column to get the histogram
     """
     column_data = self.df[column_name]
     plt.figure(figsize=(8, 6))
-    plt.hist(column_data, bins=20, color='skyblue', edgecolor='black')
+    plt.hist(column_data, bins=50, color='skyblue', edgecolor='black')
     plt.xlabel(column_name)
     plt.ylabel('Frequency')
     plt.title(f'Histogram for {column_name}')
