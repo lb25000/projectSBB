@@ -94,7 +94,7 @@ accordingly. Change `python` to `python3` if needed.
 
 - Improved control over data flow
 - Divided the code into several classes for better clarity and maintainability
-- the programme terminates as soon as the tkinter window is closed
+- the program terminates as soon as the tkinter window is closed
 - Feature 1: columns with categorical values can be clicked on and the number per characteristic is displayed
 - Feature 2: The column "lod" is now a hyperlink
 - Feature 3: Cursor logic improved so that it is more intuitive what can be clicked on.
