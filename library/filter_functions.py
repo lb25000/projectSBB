@@ -32,10 +32,14 @@ class FilterFunctions:
     @staticmethod
     def filter_integer(df, word=None, column_name=None):
         """
+        Filtering the Dataframe based on a integer in a column.
+
+        :param df: The DataFrame to be filtered.
         :param word: Word to be searched and compared
         :param column_name: The column name to filter on
         :return: Filtered dataframe
         """
+
         filtered_df = df
         if word is not None:
             filtered_df = df[df[column_name] == int(word)]
@@ -45,9 +49,12 @@ class FilterFunctions:
     @staticmethod
     def filter_float(df, word=None, column_name=None):
         """
-        :param word: wort nachdem gesucht und verglichen wird
-        :param column_name: Der Column-Name in der gefiltert werden soll
-        :return: gefiltertes datafram
+        Filtering the Dataframe based on a integer in a column.
+
+        :param df: The DataFrame to be filtered.
+        :param word: Word to be searched and compared
+        :param column_name: The column name to filter on
+        :return: Filtered dataframe
         """
         filtered_df = df
         if word is not None:
@@ -58,7 +65,10 @@ class FilterFunctions:
     @staticmethod
     def filter_direct(df, word=None, column_name=None):
         """
-        :param word: Word to search for and compare
+        Filtering the Dataframe based on a number type in a column.
+
+        :param df: The DataFrame to be filtered.
+        :param word: Word to search for and compare, can be integer or float
         :param column_name: The column name to filter on
         :return: Filtered dataframe
         """
@@ -76,12 +86,15 @@ class FilterFunctions:
     def filter_general(df, first_operator=None, first_number=None,
                        second_operator=None, second_number=None, column_name=None):
         """
-        :param first_operator: erster assignment operator nach dem gefiltert wird. Z.B >=
-        :param first_number: erste grösse nachdem gefiltert wird, z.b. 200
-        :param second_operator: zweiter assignment operator nach dem gefiltert wird. Z.B <
-        :param second_number: zweite grösse nachdem gefiltert wird, z.b. 400
-        :param column_name: Der Column-Name in der gefiltert werden soll
-        :return: gefiltertes dataframe
+        Filtering the Dataframe with an assignment operator, a number and in a specified column
+
+        :param df: The DataFrame to be filtered.
+        :param first_operator: First assignment operator which filters the data, for example, >=
+        :param first_number: First number to be filtered
+        :param second_operator: Second assignment operator which filters the data
+        :param second_number: Second number to be filtered
+        :param column_name: The column name to filter on
+        :return: Filtered dataframe
         """
         ops = {
         "<": operator.lt,
