@@ -7,5 +7,5 @@ Filtering Data:
 
     Word/String input
     -Searching for exact strings is possible by adding a == before the word, for example ==AD in the abkuerzung Bahnhof will yield all results consisting of exactly AD
-    -Searching string containing a word, but not exactly the word, is possible by entering the word into the Gui, for example AD in the abkuerzung Bahnhof will yield all results containing AD, but not exactly AD
+    -Searching strings containing a word is possible by entering the word into the Gui, for example AD in the abkuerzung Bahnhof will yield all results containing AD
     
