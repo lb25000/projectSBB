@@ -88,6 +88,12 @@ python -m tests.table_gui_test
 
 accordingly. Change `python` to `python3` if needed.
 
+## Further reading
+
+For more information on how to make use of this reporting tool, see also [manual](manual.md).
+
+
+
 ## Version Control
 
 ### Version 1.1.1 - May 23, 2024
