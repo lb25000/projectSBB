@@ -30,13 +30,13 @@ and visualization, this tool aims to make the analysis process more efficient an
 To install the necessary dependencies, run:
 
 ```python
-pip install pandas numpy matplotlib basemap basemap-data-hires tk
+pip install -r requirements.txt
 ```
 
 or for newer versions:
 
 ```python
-pip3 install pandas numpy matplotlib basemap basemap-data-hires tk
+pip3 install -r requirements.txt
 ```
 
 ## How to Get Started
@@ -91,8 +91,6 @@ accordingly. Change `python` to `python3` if needed.
 ## Further reading
 
 For more information on how to make use of this reporting tool, see also [manual](manual.md).
-
-
 
 ## Version Control
 
