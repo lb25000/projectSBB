@@ -57,19 +57,19 @@ def plot_map(self, df, station_name):
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
 def plot_correlation(self, selected_relation):
-        """
-        Plots the correlation between two variables.
-        """
-        if selected_relation == "Perronkantenlänge - Perrontyp":
-            plot_pieplot_perronlänge(self, "Perrontyp")
-        elif selected_relation == "Perronkantenlänge - Material":
-            plot_pieplot_perronlänge(self, "Material")
-        elif selected_relation == "Perronkantenlänge - Anzahl Linien pro Haltestelle":
-            plot_pieplot_perronlänge(self, "Number of Lines per Station")
-        elif selected_relation == "Material - Hilfstritt":
-            plot_barplot(self)
-        elif selected_relation == "Perronkantenlänge - KM":
-            plot_scatterplot(self, "KM", "Perronkantenlänge")
+    """
+    Plots the correlation between two variables.
+    """
+    if selected_relation == "Perronkantenlänge - Perrontyp":
+        plot_pieplot_perronlänge(self, "Perrontyp")
+    elif selected_relation == "Perronkantenlänge - Material":
+        plot_pieplot_perronlänge(self, "Material")
+    elif selected_relation == "Perronkantenlänge - Anzahl Linien pro Haltestelle":
+        plot_pieplot_perronlänge(self, "Number of Lines per Station")
+    elif selected_relation == "Material - Hilfstritt":
+        plot_barplot(self)
+    elif selected_relation == "Perronkantenlänge - KM":
+        plot_scatterplot(self, "KM", "Perronkantenlänge")
 
 def plot_histogram(self, column_name):
     """
