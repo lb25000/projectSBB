@@ -21,7 +21,6 @@ and visualization, this tool aims to make the analysis process more efficient an
 ## Prerequisites
 Please consult the [requirements.txt](requirements.txt).
 
-
 To install the necessary dependencies, run:
 
 ```python
