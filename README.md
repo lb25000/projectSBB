@@ -19,13 +19,8 @@ and visualization, this tool aims to make the analysis process more efficient an
 - **Dynamic Visualization:** Users can dynamically select the information they want to visualize, making the analysis process more flexible and interactive.
 
 ## Prerequisites
+Please consult the [requirements.txt](requirements.txt).
 
-- python
-- pandas
-- matplotlib
-- basemap
-- basemap-data-hires
-- tk
 
 To install the necessary dependencies, run:
 
