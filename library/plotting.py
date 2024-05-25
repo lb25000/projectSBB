@@ -121,23 +121,19 @@ def plot_pieplot_perronlänge(self, var):
     """
     Plots a pie plot showing the average perronkantenlänge for each entry in var.
     """
-    # Schritt 1: Temporäre Spalte hinzufügen, um die Anzahl der verschiedenen Linien pro Bahnhof zu berechnen
+    # Add a temporary column to calculate the number of different lines per station
     if var == "Number of Lines per Station":
-        # Berechne die Anzahl der verschiedenen Linien pro Bahnhof
+        # Calculate the number of different lines per station
         num_lines_per_station = self.df.groupby('Abkuerzung Bahnhof')['Linie'].nunique()
-        # Füge die temporäre Spalte zum DataFrame hinzu
+        # Add the temporary column to the DataFrame
         self.df['Number of Lines per Station'] = self.df['Abkuerzung Bahnhof'].map(num_lines_per_station)
-
-    # Schritt 2: Gruppieren nach der Anzahl der Linien pro Bahnhof und Berechnung des Durchschnitts der 'Perronkantenlänge'
+    # Group by the number of lines per station and calculate the average 'Perronkantenlänge'
     perrontyp_avg_length = self.df.groupby(var)['Perronkantenlänge'].mean().reset_index()
-
-    # Pie-Plot erstellen
+    # Create the pie plot
     plt.figure(figsize=(8, 8))
-
-    # Funktion zur Anzeige der durchschnittlichen Perronlänge definieren
+    # Function to display the average Perronkantenlänge
     def average_format(value):
         return f'{value:.2f} m'
-    
     plt.pie(perrontyp_avg_length['Perronkantenlänge'], 
             labels=perrontyp_avg_length[var], 
             autopct=average_format, 
@@ -145,8 +141,7 @@ def plot_pieplot_perronlänge(self, var):
     plt.title(f'Average Perronkantenlänge per {var}')
     plt.tight_layout()
     fig = plt.gcf()
-
-    # Fenster für den Pie-Plot erstellen
+    # Create a window for the pie plot
     pieplot_window = tk.Toplevel(self.master)
     pieplot_window.title(f'Pie Plot - Average Perronkantenlänge per {var}')
     canvas = FigureCanvasTkAgg(fig, master=pieplot_window)
