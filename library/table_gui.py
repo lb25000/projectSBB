@@ -107,7 +107,8 @@ class TableGUI:
         if col and not row:
             col_index = int(col.replace("#", "")) - 1  # get column index
             col_name = self.df.columns[col_index]  # get column name
-            if col_name in self.integer_columns or col_name in self.float_columns:
+            if (col_name in self.integer_columns or col_name in self.float_columns)\
+                    and col_name not in ['GO_IPID', 'IPID', 'FID', 'Didok-Nummer', 'BPUIC']:
                 return 'hand1'
             if col_name in ['Perrontyp', 'Hilfstritt', 'Material',
                             'Höhenverlauf', 'Kantenart', 'Auftritt']:
@@ -220,7 +221,8 @@ class TableGUI:
         Calculates statistics in the relevant integer or float column.
         """
         column = self.df[column_name]
-        if column_name in self.integer_columns or column_name in self.float_columns:
+        if (column_name in self.integer_columns or column_name in self.float_columns)\
+                and column_name not in ['GO_IPID', 'IPID', 'FID', 'Didok-Nummer', 'BPUIC']:
             return {
                 "min": column.min(),
                 "max": column.max(),
