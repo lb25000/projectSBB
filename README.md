@@ -91,9 +91,49 @@ For more information on how to make use of this reporting tool, see also [manual
 ### Coming soon
 
 - Allow the user to edit or even delete the data
-- Restrictive control over data added by users
+- Restrictive control over data added by users (allow only fully completed entries)
+- Newly entered values are saved permanently 
 
 ### Version 1.1.2 - May 30, 2024
+Last version of the first version. In this version, only the necessary buttons are
+displayed to the user, which makes interaction easier. By clicking on the corresponding button you will land on the search, input or plot screen.
+The Hide button takes you back to the start page. 
+Note that if the table is filtered first and further functions are called in this state,
+these refer to the filtered data set. If this is not desired, first press the undo filters button.
+
+#### The important Features of the first version are:
+#### 1. Interactive Table:
+Column headers can be clicked:
+If the cursor is moved over the column heading, it becomes a hand if the column can be clicked.
+By clicking on the corresponding column, minimum, maximum and the average are displayed for columns with numerical values
+and the distribution is shown in a histogram. For columns with categorical values, the frequency per value is displayed.
+Two different hand symbols are used for these two column types. 
+The "lod" column is a hyperlink. This is emphasised by the hyperlink symbol in the header on the one hand,
+and on the other hand the cursor becomes an exchange symbol when it comes to the entries in this column.
+
+#### 2. Search Function:
+Pressing the search button takes you to the search view.
+A separate search field is displayed for each column. The search supports search operators
+such as ==, >, <. Several fields can be searched for simultaneously.
+If an invalid value is entered in a search field, e.g. if a string is searched for in a numeric column,
+the user is informed of the invalid value and the type of error. For more information on how to use the search function, consult [manual](manual.md).
+
+#### 3. Add Function:
+The Add button takes you to the input view.
+The user can enter new stations. The values entered must correspond to the expected data type.
+Incorrect entries are not recorded. The user is prompted to enter a valid data type.
+The only restriction in the current version is that
+no empty entries may be entered. It is therefore sufficient to fill in a single input field to
+create a new entry. Later versions will only allow fully completed entries. 
+
+#### 4. Plot Function:
+The plot button displays the plot view. There are two plot options.
+You can search for a "Haltestellen Name". The corresponding station is displayed on a map
+of Switzerland by pressing the Go button. This may take a moment. Please be patient.
+By repeating this process, several stops can be displayed on the map.
+Or you can select from various charts using the drop-down menu.
+These are displayed by clicking the Go button.
+
 
 ### Version 1.1.1 - May 23, 2024
 
