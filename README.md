@@ -26,6 +26,7 @@ and visualization, this tool aims to make the analysis process more efficient an
 - basemap
 - basemap-data-hires
 - tk
+- seaborn
 
 To install the necessary dependencies, run:
 
