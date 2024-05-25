@@ -317,26 +317,16 @@ class TableGUI:
             "Perronkantenlänge - Material",
             "Perronkantenlänge - Anzahl Linien pro Haltestelle",
             "Material - Hilfstritt",
-            "Perronkantenlänge - KM"
+            "Perronkantenlänge - KM",
+            ""
         ])
         self.relation_dropdown.pack(side="left", anchor="w", padx=(0, 10), pady=5)
-
-        # Create and pack the button for plotting
-        plot_button = ttk.Button(self.coordinate_entries_frame, text="Plot relation", command=self.plot_correlation_selected_relation)
-        plot_button.pack(side="left", padx=(10, 5), pady=5)
 
         # Update the canvas with the new frame
         self.coordinate_canvas.create_window((0, 0), window=self.coordinate_entries_frame,
                                              anchor="nw")
         self.coordinate_entries_frame.update_idletasks()
         self.coordinate_canvas.config(scrollregion=self.coordinate_canvas.bbox("all"))
-
-    def plot_correlation_selected_relation(self):
-        """
-        Plot correlation based on the selected relation from the dropdown.
-        """
-        selected_relation = self.relation_dropdown.get()
-        plot_correlation(self, selected_relation)
 
     def pack_search_and_input(self):
         """
@@ -385,7 +375,7 @@ class TableGUI:
         Show the coordinate search fields 
         and configure the 'Go' button to filter and plot coordinates.
         """
-        self.go_button.configure(command=self.filter_coordinates)
+        self.go_button.configure(command=self.filter_and_plot)
         self.go_button.pack(side="left", padx=5)
         self.hide_button.pack(side="left", padx=5)
         self.undo_button.pack_forget()
@@ -466,6 +456,17 @@ class TableGUI:
         self.df = search_df
         self._update_table()
 
+    def filter_and_plot(self):
+        """
+        Triggers filtering the coordinates and plotting based on user inputs.
+        If the entry field for plotting the station or the realtion is empty
+        the corresponding method is not called.
+        """
+        if self.search_entries["Haltestellen Name"].get().strip():
+            self.filter_coordinates()
+        if self.relation_dropdown.get().strip():
+            self.plot_correlation_selected_relation()
+
     def filter_coordinates(self):
         """
         Takes input from user for coordinates and converts to float.
@@ -484,6 +485,13 @@ class TableGUI:
         filtered_df.loc[:, 'end_long'] = filtered_df['end_long'].astype(float)
         filtered_df.loc[:, 'end_lat'] = filtered_df['end_lat'].astype(float)
         plot_map(self, filtered_df, station_name)
+
+    def plot_correlation_selected_relation(self):
+        """
+        Plot correlation based on the selected relation from the dropdown.
+        """
+        selected_relation = self.relation_dropdown.get()
+        plot_correlation(self, selected_relation)
 
     def execute_input(self):
         """
