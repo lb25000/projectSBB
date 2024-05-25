@@ -19,14 +19,7 @@ and visualization, this tool aims to make the analysis process more efficient an
 - **Dynamic Visualization:** Users can dynamically select the information they want to visualize, making the analysis process more flexible and interactive.
 
 ## Prerequisites
-
-- python
-- pandas
-- matplotlib
-- basemap
-- basemap-data-hires
-- tk
-- seaborn
+Please consult the [requirements.txt](requirements.txt).
 
 To install the necessary dependencies, run:
 
@@ -94,6 +87,13 @@ accordingly. Change `python` to `python3` if needed.
 For more information on how to make use of this reporting tool, see also [manual](manual.md).
 
 ## Version Control
+
+### Coming soon
+
+- Allow the user to edit or even delete the data
+- Restrictive control over data added by users
+
+### Version 1.1.2 - May 30, 2024
 
 ### Version 1.1.1 - May 23, 2024
 
