@@ -92,7 +92,8 @@ For more information on how to make use of this reporting tool, see also [manual
 
 - Allow the user to edit or even delete the data
 - Restrictive control over data added by users (allow only fully completed entries)
-- Newly entered values are saved permanently 
+- Newly entered values are saved permanently
+- Optimize the code, especially for plotting, to make it run faster.
 
 ### Version 1.1.2 - May 30, 2024
 Last version of the first version. In this version, only the necessary buttons are
