@@ -19,7 +19,12 @@ and visualization, this tool aims to make the analysis process more efficient an
 - **Dynamic Visualization:** Users can dynamically select the information they want to visualize, making the analysis process more flexible and interactive.
 
 ## Prerequisites
-Please consult the [requirements.txt](requirements.txt).
+Please consult the [requirements.txt](requirements.txt). 
+If you are using a python version older than version 3, please install Tkinter first.
+
+````python
+pip install tk
+````
 
 To install the necessary dependencies, run:
 
