@@ -57,7 +57,13 @@ Use the provided buttons to interact with the data.
 Move the mouse over the column headings, if the mouse becomes an index finger,
 the column can be clicked on.
 
-If a virtual environment is used, activate this:
+If a virtual environment is used, create one with the following command:
+
+```python
+python -m venv venv
+```
+
+Then activate this:
 
 - macOS/Linux:
 
